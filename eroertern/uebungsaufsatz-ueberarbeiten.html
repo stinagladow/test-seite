@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Übungsaufsatz überarbeiten – Textbezogene Erörterung</title><style>:root{
+  --bg:#f6f7f9; --card:#fff; --ink:#1d2433; --muted:#5b6475; --line:#e2e5eb;
+  --accent:#1f5fa8; --accent-soft:#e8f0fb;
+  --basis:#2e8b57; --basis-soft:#e6f4ec;
+  --standard:#1f5fa8; --standard-soft:#e8f0fb;
+  --experte:#6b45b5; --experte-soft:#f0ebfa;
+  --warn:#b4541a; --warn-soft:#fdf0e6; --ok:#2e8b57; --ok-soft:#e6f4ec; --bad:#b3261e; --bad-soft:#fbeaea;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.55}
+button{font:inherit;cursor:pointer}
+.app{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+/* sidebar */
+.side{background:#fff;border-right:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;overflow:auto;align-self:start}
+.side h1{font-size:17px;margin:0 0 4px;line-height:1.3}
+.side .sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+.levelpill{display:inline-block;font-size:12px;font-weight:600;padding:2px 10px;border-radius:99px;color:#fff;margin-bottom:12px}
+.lv-basis{background:var(--basis)} .lv-standard{background:var(--standard)} .lv-experte{background:var(--experte)}
+.nav{list-style:none;margin:0;padding:0}
+.nav li{margin:2px 0}
+.nav button{width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:7px 10px;font-size:14px;color:var(--ink);display:flex;gap:8px;align-items:flex-start}
+.nav button:hover{background:var(--bg)}
+.nav button.cur{background:var(--accent-soft);font-weight:600}
+.nav button:disabled{opacity:.45;cursor:not-allowed}
+.nav .dot{flex:0 0 18px;height:18px;border-radius:50%;border:2px solid var(--line);font-size:11px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.nav .done .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+.nav .grp{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:12px 10px 4px}
+.progress{height:6px;background:var(--line);border-radius:99px;margin:6px 0 16px;overflow:hidden}
+.progress span{display:block;height:100%;background:var(--accent);transition:width .3s}
+.side .small{font-size:13px;margin-top:18px;color:var(--muted)}
+.side .small button{background:none;border:0;color:var(--accent);padding:0;text-decoration:underline;font-size:13px}
+/* main */
+main{padding:28px 36px 80px;max-width:900px;width:100%}
+.steptag{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+main h2{font-size:26px;margin:4px 0 6px;line-height:1.25}
+.lead{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:14px 0}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{margin:6px 0}
+.card ul,.card ol{margin:6px 0;padding-left:22px}
+.task{border-left:5px solid var(--accent)}
+.task h3::before{content:"Aufgabe  ";color:var(--accent)}
+/* level-specific boxes */
+.lvbox{border-radius:var(--radius);padding:14px 18px;margin:14px 0;border:1px solid}
+.lvbox.basis{background:var(--basis-soft);border-color:#bfe1cc}
+.lvbox.standard{background:var(--standard-soft);border-color:#c5d8f1}
+.lvbox.experte{background:var(--experte-soft);border-color:#d8cdf0}
+.lvbox .tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.lvbox.basis .tag{color:var(--basis)} .lvbox.standard .tag{color:var(--standard)} .lvbox.experte .tag{color:var(--experte)}
+/* help */
+details.help{background:#fff;border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;overflow:hidden}
+details.help>summary{cursor:pointer;padding:12px 18px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:center}
+details.help>summary::-webkit-details-marker{display:none}
+details.help>summary::before{content:"▸";transition:transform .2s;color:var(--muted)}
+details.help[open]>summary::before{transform:rotate(90deg)}
+details.help .body{padding:0 18px 14px}
+details.help.muster>summary{color:#7a5a00} details.help.muster{border-left:5px solid #e0b400}
+details.help.tipp>summary{color:var(--warn)} details.help.tipp{border-left:5px solid var(--warn)}
+details.help.formul>summary{color:var(--accent)} details.help.formul{border-left:5px solid var(--accent)}
+details.help.loesung>summary{color:var(--ok)} details.help.loesung{border-left:5px solid var(--ok)}
+.muster-text{background:#fffbea;border-radius:8px;padding:12px 14px;font-family:Georgia,"Times New Roman",serif;font-size:16.5px;margin:8px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{background:var(--accent-soft);border:1px solid #c5d8f1;border-radius:99px;padding:4px 12px;font-size:14.5px;cursor:pointer}
+.chip:hover{background:#d7e6f8}
+.chip.static{cursor:default}
+/* checklist */
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+.checklist label:last-child{border-bottom:0}
+.checklist input{margin-top:5px;width:18px;height:18px;flex:0 0 18px}
+.checklist .count{font-size:13px;color:var(--muted);margin-top:6px}
+/* write */
+.write label.lbl{font-weight:600;display:block;margin-bottom:6px}
+textarea,input[type=text],select{width:100%;font:inherit;border:1px solid #cfd4dc;border-radius:8px;padding:10px 12px;background:#fff;color:var(--ink)}
+textarea{min-height:150px;resize:vertical;line-height:1.55}
+textarea:focus,input:focus,select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.btn{border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:8px;padding:8px 14px;font-size:15px}
+.btn.ghost{background:#fff;color:var(--accent)}
+.btn.small{padding:5px 10px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.wc{font-size:13px;color:var(--muted);margin-left:auto}
+.result{margin-top:10px;border-radius:8px;padding:10px 14px;font-size:15px}
+.result.ok{background:var(--ok-soft);color:#1d5c39}
+.result.warn{background:var(--warn-soft);color:#7a3a10}
+.result.bad{background:var(--bad-soft);color:var(--bad)}
+.result ul{margin:4px 0;padding-left:20px}
+mark.hl{background:#ffe08a;border-radius:3px;padding:0 2px}
+/* builder */
+.builder{display:grid;gap:10px}
+.builder .bf label{font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center}
+.builder .bf .num{background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.builder textarea{min-height:64px}
+.builder .hint{font-size:13.5px;color:var(--muted);margin:2px 0 4px}
+/* mc */
+.mc label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin:6px 0;cursor:pointer}
+.mc label:hover{background:var(--bg)}
+.mc input{margin-top:5px}
+/* footer nav */
+.stepnav{display:flex;justify-content:space-between;margin-top:28px;gap:10px}
+/* level choice */
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.lvcard{border:2px solid var(--line);border-radius:var(--radius);padding:16px;background:#fff;text-align:left}
+.lvcard:hover{border-color:#b9c2cf}
+.lvcard.sel.basis{border-color:var(--basis);background:var(--basis-soft)}
+.lvcard.sel.standard{border-color:var(--standard);background:var(--standard-soft)}
+.lvcard.sel.experte{border-color:var(--experte);background:var(--experte-soft)}
+.lvcard b{display:block;font-size:17px;margin-bottom:4px}
+.lvcard.basis b{color:var(--basis)} .lvcard.standard b{color:var(--standard)} .lvcard.experte b{color:var(--experte)}
+.lvcard span{font-size:14.5px;color:var(--muted)}
+/* tables */
+table.t{border-collapse:collapse;width:100%;font-size:15px;margin:8px 0}
+table.t th,table.t td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+table.t th{background:var(--bg)}
+/* source text drawer */
+.textbtn{position:fixed;right:20px;top:16px;z-index:20;box-shadow:0 4px 14px rgba(0,0,0,.18);border-radius:99px;padding:12px 18px}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(560px,94vw);background:#fff;box-shadow:-6px 0 24px rgba(0,0,0,.15);z-index:30;transform:translateX(105%);transition:transform .25s;display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.drawer header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.drawer .scroll{overflow:auto;padding:16px 18px 40px}
+.src h4{margin:0 0 2px;font-size:19px;font-family:Georgia,serif}
+.src .meta{font-size:13px;color:var(--muted);margin-bottom:12px}
+.src .ln{display:grid;grid-template-columns:34px 1fr;font-family:Georgia,"Times New Roman",serif;font-size:16px;line-height:1.6}
+.src .ln i{font-style:normal;color:#9aa3b2;font-family:system-ui,sans-serif;font-size:12px;text-align:right;padding-right:10px;padding-top:3px}
+.src .ln.pstart{margin-top:8px}
+/* sorter */
+.sorter{display:grid;gap:8px}
+.scard{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.scard .opts{display:flex;gap:6px}
+.scard .opts button{border:1px solid #cfd4dc;background:#fff;border-radius:8px;padding:5px 10px;font-size:14px}
+.scard .opts button.on.pro{background:var(--ok-soft);border-color:var(--ok);color:#1d5c39;font-weight:600}
+.scard .opts button.on.kontra{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);font-weight:600}
+.scard.right{border-color:var(--ok)} .scard.wrong{border-color:var(--bad)}
+.hourglass{display:grid;grid-template-columns:1fr;gap:10px}
+.hg-block{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff}
+.hg-block h4{margin:0 0 8px;font-size:15px}
+.hg-block .sel{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin:6px 0;font-size:14.5px}
+.final-preview{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;font-family:Georgia,"Times New Roman",serif;font-size:16.5px;white-space:pre-wrap}
+.final-preview h4{font-family:system-ui,sans-serif;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 4px}
+.final-preview h4:first-child{margin-top:0}
+.empty{color:#a0a7b4;font-style:italic}
+.menu-toggle{display:none}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .side.collapsed .nav,.side.collapsed .small{display:none}
+  .menu-toggle{display:inline-block;margin-bottom:8px}
+  main{padding:20px 16px 90px}
+  .levels{grid-template-columns:1fr}
+}
+@media print{
+  .side,.stepnav,.textbtn,.drawer,.noprint,.lead,.steptag,main>h2,.stephead,.hero,.finish{display:none!important}
+  body{background:#fff}
+  .app{display:block}
+  main{padding:0;max-width:none}
+  .final-preview{border:0;padding:0}
+}
+
+/* ================= THEMES ================= */
+.card{box-shadow:0 1px 2px rgba(20,30,60,.04),0 4px 14px rgba(20,30,60,.05);border-radius:16px}
+details.help{border-radius:14px}
+.btn{border-radius:10px;font-weight:600;transition:transform .08s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.task{border-left:0;position:relative;overflow:hidden}
+.task::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+.task h3::before{color:var(--accent)}
+/* sidebar brand */
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.brand svg{width:46px;height:46px;flex:0 0 46px}
+.brand h1{margin:0}
+.ptext{font-size:12px;font-weight:700;letter-spacing:.04em;margin:-10px 0 14px;opacity:.85}
+/* step header */
+.stephead{display:flex;gap:16px;align-items:center;margin:0 0 6px}
+.stepnum{flex:0 0 58px;height:58px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:24px;line-height:1;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 6px 16px rgba(0,0,0,.15)}
+.stepnum small{font-size:9px;font-weight:700;letter-spacing:.08em;opacity:.9;margin-bottom:3px}
+.stephead h2{margin:2px 0 0}
+.grouptag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:3px 10px;border-radius:99px}
+/* hero */
+.hero{border-radius:22px;padding:30px 32px;color:#fff;display:grid;grid-template-columns:1fr 210px;gap:20px;align-items:center;margin-bottom:8px;position:relative;overflow:hidden}
+.hero h2{color:#fff;font-size:30px;margin:6px 0 10px}
+.hero p{margin:0;opacity:.92;font-size:16.5px}
+.hero .kicker{font-size:12.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.hero svg{width:100%;height:auto}
+.lvcard{position:relative;border-radius:16px;transition:transform .1s, box-shadow .15s}
+.lvcard:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.08)}
+.lvcard .stars{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px;opacity:.85}
+.lvcard.basis .stars{color:var(--basis)} .lvcard.standard .stars{color:var(--standard)} .lvcard.experte .stars{color:var(--experte)}
+.finish{border-radius:18px;padding:18px 22px;color:#fff;display:flex;gap:16px;align-items:center;margin:10px 0 16px}
+.finish .big{font-size:38px;line-height:1}
+.finish b{font-size:18px;display:block}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.hero svg{max-width:180px}}
+
+/* ---------- WRITE (Schreibwerkstatt / Überarbeiten) ---------- */
+body.theme-write{--accent:#2b5aa8;--accent2:#5b8bd6;--accent-soft:#e8eff9;--standard:#2b5aa8;--standard-soft:#e8eff9;
+  background:#f5f3ee}
+.theme-write .side{background:#1f3a66;color:#fff;border-right:0}
+.theme-write .side .sub,.theme-write .side .small,.theme-write .nav .grp{color:#b9c9e4}
+.theme-write .side .small button{color:#ffe2a8}
+.theme-write .nav button{color:#fff}
+.theme-write .nav button:hover{background:rgba(255,255,255,.1)}
+.theme-write .nav button.cur{background:#fff;color:#1f3a66}
+.theme-write .nav .dot{border-color:rgba(255,255,255,.45);color:#fff}
+.theme-write .nav button.cur .dot{border-color:#2b5aa8;color:#2b5aa8}
+.theme-write .nav .done .dot{background:#e8b04a;border-color:#e8b04a;color:#1f3a66}
+.theme-write .progress{background:rgba(255,255,255,.2)}
+.theme-write .progress span{background:#e8b04a}
+.theme-write .ptext{color:#dfe7f4;font-weight:600}
+.theme-write .menu-toggle{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.4)}
+.theme-write .hero{background:linear-gradient(135deg,#1f3a66 0%,#2b5aa8 100%)}
+.theme-write .finish{background:#1f3a66}
+.theme-write .muster-text{background:#fffdf6;border:1px solid #efe4c8;border-left:4px solid #e8b04a}
+
+/* ---------- PHONE (Handyverbot) ---------- */
+body.theme-phone{--accent:#0e8a8c;--accent2:#ff7a59;--accent-soft:#e3f4f4;--standard:#0e8a8c;--standard-soft:#e3f4f4;
+  background:#eef5f6 linear-gradient(180deg,#e4f1f2,#f4f7f9 400px)}
+.theme-phone .side{background:linear-gradient(180deg,#0e6f78 0%,#1d4f73 100%);color:#fff;border-right:0}
+.theme-phone .side .sub,.theme-phone .side .small,.theme-phone .nav .grp{color:#bfe3e6}
+.theme-phone .side .small button{color:#ffd0c2}
+.theme-phone .nav button{color:#fff;border-radius:14px}
+.theme-phone .nav button:hover{background:rgba(255,255,255,.12)}
+.theme-phone .nav button.cur{background:#fff;color:#0e6f78}
+.theme-phone .nav .dot{border-color:rgba(255,255,255,.5);color:#fff}
+.theme-phone .nav button.cur .dot{border-color:#0e8a8c;color:#0e8a8c}
+.theme-phone .nav .done .dot{background:#ff7a59;border-color:#ff7a59;color:#fff}
+.theme-phone .progress{background:rgba(255,255,255,.18);height:16px;border-radius:5px;border:2px solid rgba(255,255,255,.85);position:relative;overflow:visible;margin-right:8px}
+.theme-phone .progress::after{content:"";position:absolute;right:-7px;top:3px;width:4px;height:6px;background:rgba(255,255,255,.85);border-radius:0 2px 2px 0}
+.theme-phone .progress span{background:linear-gradient(90deg,#7ee0a1,#3cc47a);border-radius:2px;margin:1px;height:calc(100% - 2px)}
+.theme-phone .ptext{color:#fff}
+.theme-phone .menu-toggle{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.4)}
+.theme-phone .hero{background:linear-gradient(135deg,#0e8a8c 0%,#1d4f73 70%,#2c3e74 100%)}
+.theme-phone .finish{background:linear-gradient(135deg,#0e8a8c,#ff7a59)}
+.theme-phone .stepnum{border-radius:18px}
+.theme-phone .card{border-radius:20px}
+.theme-phone .chip{background:#e3f4f4;border-color:#bfe3e3;border-radius:16px 16px 16px 4px} .theme-phone .chip:hover{background:#d1eded}
+.theme-phone .muster-text{border-radius:16px 16px 16px 4px}
+.theme-phone .textbtn{background:linear-gradient(135deg,#ff7a59,#f2603c);border-color:#f2603c}
+.theme-phone .drawer header{background:#0e6f78;color:#fff}
+.theme-phone .drawer header .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.6)}
+@media print{body.theme-write,body.theme-phone{background:#fff}}
+.lvcard{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start}
+</style></head>
+<body><div id="app" class="app"><div id="loadmsg" style="padding:30px;font-family:sans-serif;font-size:18px">Die Übung wird geladen …</div></div>
+<script>window.onerror=function(m){var e=document.getElementById("app");if(e&&!window.__ok){e.innerHTML='<div style="padding:30px;font-family:sans-serif;font-size:18px;max-width:640px"><b>Die Übung konnte nicht gestartet werden.</b><br><br>Bitte öffne die Datei in einem aktuellen Browser (Chrome, Edge, Firefox oder Safari) und nicht in einer Vorschau. Lade sie dazu zuerst herunter und öffne sie dann mit dem Browser.<br><br><small>Fehler: '+String(m).replace(/</g,"&lt;")+'</small></div>';}};</script>
+<noscript><p style="padding:20px">Bitte JavaScript aktivieren, damit die Übung funktioniert.</p></noscript>
+<script>const M = ["Ob auf dem Handy, am PC oder an der Konsole: Computerspiele gehören für viele Jugendliche ganz selbstverständlich zum Alltag, und auch viele Erwachsene spielen regelmäßig. Besonders umstritten sind dabei Ego-Shooter. In diesen Spielen erlebt man die Spielwelt aus der Ich-Perspektive einer Figur und bekämpft Gegner mit Waffen. Deshalb stellt sich die Frage: Sollen Ego-Shooter als Teil der Alltagskultur anerkannt werden?", "Mit dieser Frage beschäftigt sich Ananda Bräunig in ihrem Kommentar „Ego-Shooter gehören zur Alltagskultur“, der 2015 anlässlich der Spielemesse Gamescom auf der Internetseite der Deutschen Welle erschienen ist. Sie vertritt die These, dass Computerspiele, auch Ego-Shooter, ein fester Bestandteil der Kultur seien. Im Folgenden werden zunächst Inhalt und Aufbau des Kommentars untersucht, anschließend wird ihre Position erörtert.", "Im ersten Sinnabschnitt (Z. 1–4) steigt die Autorin in das Thema ein, indem sie darauf verweist, dass Menschen schon immer gespielt hätten. Der Spieltrieb sei „die wichtigste Eigenschaft des Menschen, um eine Kultur weiterzuentwickeln“ (Z. 3 f.).", "Im zweiten Sinnabschnitt (Z. 5–13) informiert sie zunächst über den aktuellen Anlass, die Gamescom in Köln. Mit Fakten wie über 800 Ausstellern verdeutlicht sie, wie groß die Spielebranche ist.", "Im dritten Sinnabschnitt (Z. 14–20) stellt sie einen persönlichen Bezug her: Obwohl sie selbst mit Computerspielen aufgewachsen sei, sei die Messe für sie ein „digitaler Overkill“ (Z. 20).", "Im vierten Sinnabschnitt (Z. 21–26) stellt die Autorin ihre zentrale These auf: „Computerspiele, sogar Ego-Shooter, sind ein elementarer Bestandteil unserer Kultur geworden – ob wir wollen oder nicht“ (Z. 24–26).", "Im fünften Sinnabschnitt (Z. 27–39) führt sie ihr erstes Argument an und veranschaulicht es durch ein Gedankenexperiment: Ohne digitale Spiele fehlten die Spiele-Apps auf dem Smartphone, das Wii-Bowling im Altenheim und die Lern-Apps in der Schule. Damit zeigt sie, dass Computerspiele in allen Lebensbereichen und Generationen angekommen sind.", "Im sechsten Sinnabschnitt (Z. 40–55) greift die Verfasserin den Einwand auf, Computerspiele dienten nur dem Kommerz, und entkräftet ihn. Sie verweist auf den Kulturhistoriker Johan Huizinga, nach dem der Mensch durch Spielen seine Fähigkeiten weiterentwickle und sogar Politik, Wissenschaft und Recht ursprünglich aus dem Spiel entstanden seien (vgl. Z. 52–55).", "Im siebten Sinnabschnitt (Z. 56–61) fasst sie ihre Aussagen zusammen und belegt sie mit der Angabe, dass fast die Hälfte der Deutschen digital spiele. Deswegen ist sich die Verfasserin sicher: „Die Lust am Spiel bleibt gleich, nur die Form hat sich verändert“ (Z. 59 f.).", "Im achten Sinnabschnitt (Z. 62–74) gibt sie zu bedenken, dass Ego-Shooter möglicherweise aggressiv machen (vgl. Z. 65 f.). Diesen Einwand entkräftet sie jedoch durch einen Vergleich: Auch Horror- und Actionfilme hätten dieses Potenzial, und nicht alles in Film oder Literatur müsse jedem gefallen, um zur Kultur zu gehören.", "Bevor die Autorin im neunten Sinnabschnitt (Z. 75–92) mit einem Ausblick auf wertvolle Indie-Games schließt, die etwa Krankheit oder Umweltschutz zum Thema machen, fordert sie, dass sich jeder mit der Game-Szene auseinandersetze. Sie kritisiert Eltern, die nicht hinschauen, ebenso wie Menschen, die Computerspiele verteufeln, denn das sei „nicht mehr zeitgemäß“ (Z. 85).", "In ihrem meinungsbildenden Kommentar plädiert Ananda Bräunig dafür, Ego-Shooter als Teil der Alltagskultur nicht nur hinzunehmen, sondern sich bewusst und kritisch mit ihnen auseinanderzusetzen, statt sie zu ignorieren oder zu verteufeln.", "Doch überzeugt diese Position? Im Folgenden soll erörtert werden, ob Ego-Shooter tatsächlich als Teil der Alltagskultur anerkannt werden sollten.", "Für Bräunigs Position spricht, dass Ego-Shooter ein Teil der Alltagskultur sind und als solcher anerkannt werden sollten.", "Ananda Bräunig betont, dass Computerspiele in allen Lebensbereichen und Generationen angekommen seien. Diese Aussage lässt sich durch Zahlen belegen: Laut einer Statistik von 2020 spielen in Deutschland in jeder Altersgruppe ab zehn Jahren rund fünf Millionen Menschen, sogar bei den über 60-Jährigen sind es noch etwa 5,1 Millionen (vgl. M2). Allerdings beziehen sich die Beispiele der Autorin, etwa Wii-Bowling oder Lern-Apps, auf Computerspiele allgemein. Ergänzen muss man deshalb, dass auch Ego-Shooter weit verbreitet sind: 22 % der Befragten geben an, Shooter zu spielen (vgl. M2). Hinzu kommen E-Sport-Turniere mit Ego-Shootern, die Tausende Menschen im Livestream verfolgen. Wer Ego-Shooter einfach übersieht, blendet also einen Teil des Alltags vieler Menschen aus. Deshalb gehören sie zu der Alltagskultur.", "Ein weiterer, sogar noch wichtigerer Aspekt besteht darin, dass eine bewusste Auseinandersetzung mehr bewirkt als ein Verbot. Die Autorin kritisiert zu Recht sowohl Eltern, die nicht hinschauen, als auch Menschen, die Computerspiele verteufeln. Wer Spiele nur verbietet, erreicht oft das Gegenteil, denn viele Jugendliche spielen dann heimlich, ohne dass jemand mit ihnen über die Inhalte spricht. Wenn sich Eltern und Schule dagegen mit Ego-Shootern beschäftigen, können sie Jugendlichen helfen, Gewalt im Spiel von echter Gewalt zu unterscheiden. Zum Beispiel können Eltern auf die Altersfreigaben achten, die viele Ego-Shooter erst ab 16 oder 18 Jahren erlauben, und mit ihren Kindern über deren Spiele sprechen. So lernen Jugendliche, kritisch mit Medien umzugehen. Auch dieses Argument zeigt, dass Ego-Shooter als Teil der Alltagskultur anerkannt werden sollten, denn nur was man anerkennt, kann man auch kritisch begleiten.", "Zweifelsohne sprechen also einige Argumente für Bräunigs Position. Dennoch darf nicht vergessen werden, dass Ego-Shooter nicht unkritisch als Teil der Alltagskultur akzeptiert werden sollten.", "Zu bedenken ist zunächst, dass Ego-Shooter süchtig machen können. Um in diesen Spielen erfolgreich zu sein, muss man viel trainieren, und der Wunsch, besser zu sein als die Gegner, hält viele Spieler lange vor dem Bildschirm. Viele kennen das aus dem eigenen Umfeld: Aus „nur noch einer Runde“ werden schnell mehrere Stunden, und Hausaufgaben oder Treffen mit Freunden kommen zu kurz. Gerade für Jugendliche, die noch lernen müssen, sich ihre Zeit einzuteilen, ist das gefährlich. Die Aussage der Autorin, das Pendeln zwischen realer und virtueller Welt sei „in Ordnung“ (Z. 77), blendet diese Gefahr aus. Wenn Ego-Shooter als ganz normaler Teil des Alltags gelten, wird die Suchtgefahr womöglich noch weniger ernst genommen. Auch deshalb sollte man sie nicht unkritisch akzeptieren.", "Das schwerwiegendste Argument ist jedoch, dass Gewalt in Ego-Shootern das eigentliche Spielziel ist. Erfolgreich ist nur, wer möglichst viele Gegner virtuell erschießt. Wer immer wieder übt, schnell und ohne Zögern auf menschenähnliche Figuren zu schießen, gewöhnt sich an diese Bilder. Selbst die Autorin hält es für möglich, dass Ego-Shooter aggressiv machen, geht auf diesen Einwand aber nur mit einem einzigen Wort ein (vgl. Z. 65 f.). Ihr Vergleich mit Horror- und Actionfilmen ist zwar nachvollziehbar, jedoch übersieht er einen wichtigen Unterschied: Einen Film schaut man nur an, in einem Ego-Shooter handelt man selbst und wird für das Töten sogar belohnt. Gerade deshalb sind Ego-Shooter problematischer als Filme, und es spricht vieles dagegen, sie ohne Einschränkung als Teil der Alltagskultur zu akzeptieren.", "Wägt man die Argumente gegeneinander ab, so zeigt sich, dass Ego-Shooter tatsächlich ein Teil der Alltagskultur sind. Millionen Menschen spielen sie, und sie lassen sich nicht einfach aus dem Alltag streichen. Das bedeutet jedoch nicht, dass man sie unkritisch hinnehmen sollte, denn die Gefahren durch Gewalt und Sucht sind ernst zu nehmen. Die Frage, ob Ego-Shooter als Teil der Alltagskultur anerkannt werden sollten, lässt sich daher mit einem bedingten Ja beantworten. Altersfreigaben müssen eingehalten werden, Spielzeiten sollten begrenzt sein und Eltern sollten mit ihren Kindern über die Spiele sprechen. Wünschenswert wäre es, dass Jung und Alt dabei im Gespräch bleiben – denn genau diese Auseinandersetzung fordert auch Ananda Bräunig in ihrem Kommentar."];
+const chips = a => '<p style="font-size:14px;color:var(--muted);margin:0 0 4px">Klicke auf eine Formulierung, um sie an der Cursor-Position in dein Textfeld einzufügen.</p><div class="chips">'+a.map(x=>`<span class="chip">${x}</span>`).join("")+'</div>';
+const mu = (...i) => i.map(n=>`<div class="muster-text">${M[n]}</div>`).join("");
+const KONJ = `<p>Aussagen der Autorin gibst du in der <b>indirekten Rede (Konjunktiv I)</b> wieder:</p>
+<table class="t"><tr><th>Indikativ</th><th>Konjunktiv I</th><th>Indikativ</th><th>Konjunktiv I</th></tr>
+<tr><td>ist</td><td>sei</td><td>sind</td><td>seien</td></tr>
+<tr><td>hat</td><td>habe</td><td>haben</td><td>hätten (Ersatzform)</td></tr>
+<tr><td>muss</td><td>müsse</td><td>kann</td><td>könne</td></tr>
+<tr><td>gibt</td><td>gebe</td><td>gehört</td><td>gehöre</td></tr>
+<tr><td>soll</td><td>solle</td><td>darf</td><td>dürfe</td></tr></table>
+<p>Beispiel: Bräunig schreibt „Spielen ist wichtig“ → <i>Sie betont, Spielen <b>sei</b> wichtig.</i></p>`;
+const OBJ = `<table class="t"><tr><th>Statt (Ich-Form) …</th><th>… besser objektiv</th></tr>
+<tr><td>Ich finde, dass …</td><td>Es spricht vieles dafür, dass …</td></tr>
+<tr><td>Meiner Meinung nach …</td><td>Insgesamt zeigt sich, dass …</td></tr>
+<tr><td>Ich komme zu dem Schluss, dass …</td><td>Wägt man die Argumente ab, so zeigt sich, dass …</td></tr>
+<tr><td>Mein Fazit lautet: …</td><td>Die Frage, ob …, lässt sich mit … beantworten.</td></tr>
+<tr><td>Ich wünsche mir, dass …</td><td>Wünschenswert wäre es, dass …</td></tr>
+<tr><td>… unserer Alltagskultur</td><td>… der Alltagskultur</td></tr></table>`;
+const ARG_FIELDS = [
+  {label:"Behauptung", hint:"Was genau behauptest du? Bei der Autorenmeinung gern mit Textbezug: „Ananda Bräunig betont, dass …“", ph:"z. B. Ananda Bräunig betont, dass …"},
+  {label:"Begründung", hint:"Warum ist das so? „denn …“, „weil …“, „Das liegt daran, dass …“", ph:"Das liegt daran, dass …"},
+  {label:"Beispiel / Beleg", hint:"Ein konkretes Beispiel, eine Zahl aus M2 oder ein Zitat mit Zeilenangabe.", ph:"Zum Beispiel …"},
+  {label:"Rückführung zur These", hint:"Verbinde das Argument wieder mit deiner These: „Deshalb …“, „Auch dieses Argument zeigt, dass …“", ph:"Deshalb …"}];
+
+window.PAGE = {
+  theme:{id:"write", kicker:"Schreibwerkstatt · Textbezogene Erörterung", stepWord:"SCHRITT",
+  progress:p=>p+" % bearbeitet",
+  finish:'<div class="big">✓</div><div><b>Geschafft!</b>Hier steht dein überarbeiteter Aufsatz. Lies ihn ein letztes Mal durch und speichere ihn.</div>',
+  icon:'<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="6" width="38" height="52" rx="4" fill="#fff"/><rect x="10" y="6" width="7" height="52" rx="3" fill="#e8b04a"/><g stroke="#b9c9e4" stroke-width="2.4"><line x1="22" y1="20" x2="42" y2="20"/><line x1="22" y1="28" x2="42" y2="28"/><line x1="22" y1="36" x2="36" y2="36"/></g><g transform="rotate(35 46 40)"><rect x="42" y="18" width="9" height="34" rx="2" fill="#e8b04a"/><polygon points="42,52 51,52 46.5,61" fill="#f3dcb0"/><polygon points="44.8,57 48.2,57 46.5,61" fill="#1f3a66"/></g></svg>',
+  hero:'<svg viewBox="0 0 220 170" aria-hidden="true"><rect x="20" y="22" width="88" height="124" rx="6" fill="#fff"/><rect x="112" y="22" width="88" height="124" rx="6" fill="#fffdf6"/><rect x="106" y="22" width="8" height="124" fill="#d9cfb4"/><g stroke="#c9d6ec" stroke-width="2"><line x1="32" y1="46" x2="96" y2="46"/><line x1="32" y1="60" x2="96" y2="60"/><line x1="32" y1="74" x2="90" y2="74"/><line x1="32" y1="88" x2="96" y2="88"/><line x1="32" y1="102" x2="80" y2="102"/><line x1="124" y1="46" x2="188" y2="46"/><line x1="124" y1="60" x2="188" y2="60"/><line x1="124" y1="74" x2="176" y2="74"/></g><path d="M32 60 Q 60 54 90 62" stroke="#e8b04a" stroke-width="3" fill="none"/><path d="M124 88 l8 8 l16 -18" stroke="#7ed3a0" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><g transform="rotate(38 170 110)"><rect x="162" y="64" width="16" height="62" rx="3" fill="#e8b04a"/><rect x="162" y="64" width="16" height="10" rx="3" fill="#f2c9c0"/><polygon points="162,126 178,126 170,141" fill="#f3dcb0"/><polygon points="166.8,135 173.2,135 170,141" fill="#1f3a66"/></g></svg>'},
+  key:"ewh-ueberarbeiten-egoshooter-v1",
+  title:"Den eigenen Übungsaufsatz überarbeiten",
+  short:"Übungsaufsatz überarbeiten",
+  sub:"Textbezogene Erörterung · Ego-Shooter",
+  fileName:"Ueberarbeiteter_Aufsatz",
+  intro:"Du überarbeitest deinen Übungsaufsatz zu Ananda Bräunigs Kommentar „Ego-Shooter gehören zur Alltagskultur“ Schritt für Schritt – genau nach unserer Gliederung. In jedem Schritt prüfst du deinen Text mit einer Checkliste, vergleichst mit dem Musteraufsatz und schreibst eine verbesserte Fassung.",
+  startExtra:`<h3>Das brauchst du</h3><ul><li>deinen Übungsaufsatz (lege ihn neben dich)</li><li>den Kommentar von Ananda Bräunig (M1) und die Grafiken (M2)</li></ul>
+  <h3>So gehst du in jedem Schritt vor</h3><ol><li><b>Prüfen:</b> Hake in der Checkliste ab, was dein Aufsatz schon richtig macht.</li><li><b>Vergleichen:</b> Schau dir den passenden Abschnitt aus dem Musteraufsatz an.</li><li><b>Überarbeiten:</b> Schreibe den Abschnitt verbessert ins Textfeld und mach den Sprach-Check.</li></ol>
+  <p>Am Ende kannst du deinen überarbeiteten Aufsatz speichern, kopieren oder ausdrucken.</p>`,
+  levels:[
+    {id:"basis", name:"Basis", desc:"Viele Hilfen: Satzanfänge zum Einfügen, Argument-Baukasten, Musterabschnitte sind schon aufgeklappt."},
+    {id:"standard", name:"Standard", desc:"Checklisten, Formulierungshilfen und Argument-Baukasten. Musterabschnitte klappst du bei Bedarf auf."},
+    {id:"experte", name:"Experte", desc:"Nur Checklisten und Muster zum Vergleich – dafür bekommst du zusätzliche Profi-Aufträge."}],
+  finalHeader: S => "Überarbeiteter Übungsaufsatz"+" – Ananda Bräunig: „Ego-Shooter gehören zur Alltagskultur“",
+  steps:[
+  /* 1 */ {group:"Vorbereitung", nav:"Diagnose: Wo stehe ich?", title:"Diagnose: Wo steht mein Aufsatz?",
+    lead:"Lies deinen Übungsaufsatz einmal ganz durch und hake ab, was schon enthalten ist. So siehst du, wo du am meisten verbessern kannst.",
+    blocks:[
+      {type:"check", id:"diag", title:"Ist alles da?", items:[
+        "<b>1. Einleitung:</b> Ich wecke Interesse und ende mit einer klaren <b>Themenfrage</b>.",
+        "<b>2.1.1 Überleitung zum Text:</b> Autorin, Titel, Quelle, Jahr, Textsorte und These sind genannt.",
+        "<b>2.1.2 Strukturierte Inhaltsangabe:</b> Jeder Sinnabschnitt hat Zeilenangaben und seine <b>Funktion</b> wird benannt.",
+        "<b>2.1.3 Intention:</b> Ich erkläre, was die Autorin mit ihrem Text erreichen will.",
+        "<b>2.2.1 Autorenmeinung:</b> Eine <b>These</b> und 1–2 vollständige Argumente.",
+        "<b>2.2.2 Gegenmeinung:</b> Eine <b>Gegenthese</b> und 1–2 vollständige Argumente.",
+        "<b>2.2.3 Synthese:</b> Ich wäge ab und beziehe Stellung – ohne neue Argumente.",
+        "<b>Sprache:</b> Präsens, indirekte Rede, Zitate mit Zeilenangabe, keine Ich-Form."]},
+      {type:"info", title:"Und jetzt?", html:"<p>Überall, wo du <b>nicht</b> abhaken konntest, liegt eine Baustelle. Die Schritte findest du links in der Leiste – du kannst sie in beliebiger Reihenfolge bearbeiten.</p>"},
+      {type:"lvbox", lv:"basis", tag:"Dein Auftrag (Basis)", html:"<p>Überarbeite mindestens: <b>Einleitung</b>, <b>Strukturierte Inhaltsangabe</b> und <b>ein Argument</b> der Erörterung.</p>", levels:["basis"]},
+      {type:"lvbox", lv:"standard", tag:"Dein Auftrag (Standard)", html:"<p>Überarbeite alle Teile, die du nicht abhaken konntest – mindestens <b>drei Schritte</b>, darunter die Strukturierte Inhaltsangabe.</p>", levels:["standard"]},
+      {type:"lvbox", lv:"experte", tag:"Dein Auftrag (Experte)", html:"<p>Überarbeite die <b>gesamte Erörterung</b> (2.2.1 bis 2.2.3) und erledige die Profi-Aufträge in den einzelnen Schritten.</p>", levels:["experte"]}]},
+
+  /* 2 */ {group:"1. Einleitung", nav:"Einleitung", title:"1. Einleitung",
+    lead:"Die Einleitung weckt Interesse, führt zum Thema hin und endet mit der Themenfrage.",
+    blocks:[
+      {type:"check", id:"c_einl", title:"Checkliste Einleitung", items:[
+        "Ich wecke Interesse (z. B. Bedeutung des Themas, Alltagsszene, aktuelles Ereignis, Begriffserklärung).",
+        "Ich erkläre kurz, was Ego-Shooter sind.",
+        "Ich ende mit der Themenfrage: <i>Sollen Ego-Shooter als Teil der Alltagskultur anerkannt werden?</i>",
+        "Ich frage <b>nicht</b> nach einem Verbot von Ego-Shootern – das ist ein anderes Thema.",
+        "Ich nenne noch <b>keine</b> eigene Meinung und keine Argumente."]},
+      {type:"help", kind:"muster", title:"Muster: Einleitung", html:mu(0), openFor:["basis"]},
+      {type:"help", kind:"formul", title:"Formulierungshilfen", html:chips(["Ob … oder …:","Für viele Jugendliche gehört … zum Alltag.","Besonders umstritten sind dabei …","Darunter versteht man …","Deshalb stellt sich die Frage: Sollen Ego-Shooter als Teil der Alltagskultur anerkannt werden?"]), chipsFor:"einl", openFor:["basis","standard"], levels:["basis","standard"]},
+      {type:"write", id:"einl", task:true, label:"Meine überarbeitete Einleitung", rows:6, noQuoteCheck:true,
+        starters:{basis:"[Einstieg: Bedeutung des Themas oder eine Alltagsszene] …\nBesonders umstritten sind dabei Ego-Shooter. Darunter versteht man …\nDeshalb stellt sich die Frage: Sollen Ego-Shooter als Teil der Alltagskultur anerkannt werden?"}},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag", html:"<p>Formuliere im Heft einen <b>zweiten, ganz anderen Einstieg</b> (z. B. mit einem aktuellen Ereignis statt einer Begriffserklärung). Entscheide begründet, welcher Einstieg besser zur Themenfrage hinführt.</p>", levels:["experte"]}]},
+
+  /* 3 */ {group:"2.1 Textanalyse", nav:"2.1.1 Überleitung zum Text", title:"2.1.1 Überleitung zum Text",
+    lead:"Hier stellst du den Text vor, um den es geht, und nennst die These der Autorin.",
+    blocks:[
+      {type:"check", id:"c_ueber", title:"Checkliste Überleitung", items:[
+        "Autorin: <b>Ananda Bräunig</b>",
+        "Titel in Anführungszeichen: <b>„Ego-Shooter gehören zur Alltagskultur“</b>",
+        "Quelle und Jahr: <b>Deutsche Welle, 2015</b>; Anlass: <b>Gamescom</b>",
+        "Textsorte: <b>Kommentar</b>",
+        "These der Autorin in eigenen Worten, im Konjunktiv I (… <i>seien</i> …)",
+        "Ankündigung des Vorgehens: erst Textanalyse, dann Erörterung"]},
+      {type:"help", kind:"muster", title:"Muster: Überleitung zum Text", html:mu(1), openFor:["basis"]},
+      {type:"help", kind:"formul", title:"Formulierungshilfen", html:chips(["Mit dieser Frage beschäftigt sich","in ihrem Kommentar „Ego-Shooter gehören zur Alltagskultur“,","der 2015 anlässlich der Gamescom auf der Internetseite der Deutschen Welle erschienen ist.","Die Autorin vertritt die These, dass","Im Folgenden werden zunächst Inhalt und Aufbau des Kommentars untersucht,","anschließend wird ihre Position erörtert."]), chipsFor:"ueber", openFor:["basis"], levels:["basis","standard"]},
+      {type:"write", id:"ueber", task:true, label:"Meine überarbeitete Überleitung zum Text", rows:5, indirect:true,
+        starters:{basis:"Mit dieser Frage beschäftigt sich Ananda Bräunig in ihrem Kommentar „…“, der … erschienen ist. Die Autorin vertritt die These, dass … Im Folgenden werden zunächst …, anschließend …"}}]},
+
+  /* 4 */ {group:"2.1 Textanalyse", nav:"2.1.2 Strukturierte Inhaltsangabe", title:"2.1.2 Strukturierte Inhaltsangabe",
+    lead:"Du gibst den Text Sinnabschnitt für Sinnabschnitt wieder – und sagst immer, <b>welche Funktion</b> der Abschnitt im Text hat.",
+    blocks:[
+      {type:"check", id:"c_inhalt", title:"Checkliste Strukturierte Inhaltsangabe", items:[
+        "Jeder Absatz beginnt mit dem <b>Sinnabschnitt und den Zeilen</b>: „Im ersten Sinnabschnitt (Z. 1–4) …“",
+        "Ich nenne die <b>Funktion</b> (steigt ein, stellt die These auf, führt ein Argument an, greift einen Einwand auf, entkräftet, fordert …).",
+        "Ich fasse den Inhalt <b>knapp in eigenen Worten</b> zusammen – keine Nacherzählung.",
+        "Aussagen der Autorin stehen in der <b>indirekten Rede</b> (Konjunktiv I).",
+        "Zitate stehen in Anführungszeichen mit <b>(Z. …)</b>; sinngemäße Wiedergabe mit <b>(vgl. Z. …)</b>.",
+        "Ich schreibe im <b>Präsens</b> und bewerte noch <b>nicht</b>."]},
+      {type:"help", kind:"loesung", title:"Übersicht: die 9 Sinnabschnitte und ihre Funktion", openFor:["basis"], html:`<table class="t"><tr><th>Zeilen</th><th>Inhalt</th><th>Funktion</th></tr>
+        <tr><td>1–4</td><td>Menschen haben schon immer gespielt; Spieltrieb treibt Kultur voran</td><td>Einstieg, Grundannahme</td></tr>
+        <tr><td>5–13</td><td>Gamescom: über 800 Aussteller, Vielfalt der Spiele</td><td>aktueller Anlass, Fakten</td></tr>
+        <tr><td>14–20</td><td>Autorin ist mit Spielen aufgewachsen, trotzdem „digitaler Overkill“</td><td>persönlicher Bezug</td></tr>
+        <tr><td>21–26</td><td>Computerspiele, sogar Ego-Shooter, sind „elementarer Bestandteil unserer Kultur“</td><td><b>zentrale These</b></td></tr>
+        <tr><td>27–39</td><td>Gedankenexperiment: Apps, Wii-Bowling im Altenheim, Lern-Apps</td><td>Argument 1, veranschaulicht durch Beispiele</td></tr>
+        <tr><td>40–55</td><td>Einwand „nur Kommerz“; Huizinga: „Homo ludens“</td><td>Einwand aufgreifen und entkräften, Beleg durch Experten</td></tr>
+        <tr><td>56–61</td><td>fast die Hälfte spielt digital; „nur die Form hat sich verändert“</td><td>Folgerung, Beleg durch Fakten</td></tr>
+        <tr><td>62–74</td><td>„Ego-Shooter machen aggressiv“ – „Möglich“; Vergleich mit Filmen und Literatur</td><td>Zugeständnis und Entkräftung durch Vergleich</td></tr>
+        <tr><td>75–92</td><td>sich mit Games auseinandersetzen; Kritik an Eltern und Verteuflern; wertvolle Indie-Games</td><td>Forderung, Ausblick</td></tr></table>`, levels:["basis","standard"]},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag 1", html:"<p>Gliedere den Text zuerst <b>selbst</b> in Sinnabschnitte (mit Zeilen und Funktion) – ohne Übersicht. Vergleiche danach mit dem Muster unten: Wo weicht deine Gliederung ab? Ist deine Einteilung auch begründbar?</p>", levels:["experte"]},
+      {type:"help", kind:"muster", title:"Muster: Strukturierte Inhaltsangabe (alle 9 Sinnabschnitte)", html:mu(2,3,4,5,6,7,8,9,10), openFor:["basis"]},
+      {type:"help", kind:"tipp", title:"Hilfe: indirekte Rede (Konjunktiv I)", html:KONJ, openFor:["basis"]},
+      {type:"help", kind:"formul", title:"Formulierungshilfen für die Strukturierte Inhaltsangabe", html:chips(["Im ersten Sinnabschnitt (Z. 1–4) steigt die Autorin in das Thema ein, indem","informiert sie zunächst über","Dadurch unterstreicht sie,","stellt die Autorin ihre zentrale These auf:","führt sie ihr erstes Argument an und veranschaulicht es durch","Sie verweist auf","In einem weiteren Abschnitt greift die Verfasserin den Einwand auf,","und entkräftet ihn.","Sie gibt zu bedenken,","Deswegen ist sich die Verfasserin sicher, dass","und leitet damit weiter zu","Bevor die Autorin mit einem Ausblick auf … schließt, geht sie auf … ein.","Abschließend verweist sie auf","Dadurch bekräftigt sie die Idee,"]), chipsFor:"inhalt", openFor:["basis","standard"]},
+      {type:"write", id:"inhalt", task:true, label:"Meine überarbeitete Strukturierte Inhaltsangabe", rows:16, indirect:true,
+        hint:"Tipp: Du musst nicht alle neun Abschnitte neu schreiben. Überarbeite zuerst die Abschnitte, bei denen dir Zeilen oder Funktion gefehlt haben.",
+        starters:{basis:"Im ersten Sinnabschnitt (Z. 1–4) steigt die Autorin in das Thema ein, indem …\n\nIm zweiten Sinnabschnitt (Z. 5–13) informiert sie zunächst über …\n\nIm dritten Sinnabschnitt (Z. 14–20) stellt sie einen persönlichen Bezug her: …\n\nIm vierten Sinnabschnitt (Z. 21–26) stellt die Autorin ihre zentrale These auf: …\n\nIm fünften Sinnabschnitt (Z. 27–39) führt sie ihr erstes Argument an und veranschaulicht es durch …\n\nIm sechsten Sinnabschnitt (Z. 40–55) greift die Verfasserin den Einwand auf, … und entkräftet ihn, indem …\n\nIm siebten Sinnabschnitt (Z. 56–61) fasst sie ihre Aussagen zusammen und belegt sie mit …\n\nIm achten Sinnabschnitt (Z. 62–74) gibt sie zu bedenken, dass … Diesen Einwand entkräftet sie jedoch durch einen Vergleich: …\n\nBevor die Autorin im neunten Sinnabschnitt (Z. 75–92) mit einem Ausblick auf … schließt, fordert sie, dass …",
+          standard:"Im ersten Sinnabschnitt (Z. 1–4) …\n\nIm zweiten Sinnabschnitt (Z. 5–13) …\n\nIm dritten Sinnabschnitt (Z. 14–20) …\n\nIm vierten Sinnabschnitt (Z. 21–26) …\n\nIm fünften Sinnabschnitt (Z. 27–39) …\n\nIm sechsten Sinnabschnitt (Z. 40–55) …\n\nIm siebten Sinnabschnitt (Z. 56–61) …\n\nIm achten Sinnabschnitt (Z. 62–74) …\n\nIm neunten Sinnabschnitt (Z. 75–92) …"}},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag 2", html:"<p>Benenne in mindestens <b>drei Sinnabschnitten</b> zusätzlich den <b>Argumenttyp</b>: Faktenargument, Autoritätsargument, Wertargument oder analogisierendes Argument (Vergleich).</p>", levels:["experte"]}]},
+
+  /* 5 */ {group:"2.1 Textanalyse", nav:"2.1.3 Intention", title:"2.1.3 Intention der Autorin",
+    lead:"Was will Ananda Bräunig mit ihrem Kommentar bei den Leserinnen und Lesern erreichen?",
+    blocks:[
+      {type:"mc", id:"mc_int", q:"Welche Aussage beschreibt die Intention der Autorin am besten?", options:[
+        "Sie will erreichen, dass Ego-Shooter verboten werden.",
+        "Sie will nur sachlich über die Gamescom informieren.",
+        "Sie plädiert dafür, sich bewusst und kritisch mit Computerspielen auseinanderzusetzen, statt sie zu ignorieren oder zu verteufeln.",
+        "Sie möchte, dass alle Menschen mehr Ego-Shooter spielen."], correct:2,
+        why:"Bräunig räumt Bedenken ein, fordert aber eine bewusste Auseinandersetzung (vgl. Z. 75 ff.). Ein Verbot lehnt sie ab, und Werbung für mehr Spielen macht sie nicht.",
+        whyWrong:"Lies noch einmal den letzten Sinnabschnitt (Z. 75–92): Was <i>fordert</i> die Autorin dort?"},
+      {type:"check", id:"c_int", title:"Checkliste Intention", items:[
+        "Ich nenne die Textsorte (meinungsbildender Kommentar).",
+        "Ich formuliere, wofür die Autorin plädiert bzw. woran sie appelliert.",
+        "Ich verkürze nicht auf „Sie findet Ego-Shooter gut“ – sie räumt ja auch Bedenken ein."]},
+      {type:"help", kind:"muster", title:"Muster: Intention", html:mu(11), openFor:["basis"]},
+      {type:"write", id:"intent", task:true, label:"Meine überarbeitete Intention", rows:4,
+        starters:{basis:"In ihrem meinungsbildenden Kommentar plädiert Ananda Bräunig dafür, … Sie appelliert an …"}}]},
+
+  /* 6 */ {group:"2.2 Erörterung", nav:"2.2.1 Autorenmeinung (These)", title:"2.2.1 Argumentationsblock der Autorenmeinung",
+    lead:"Du stützt die Position der Autorin mit <b>einer These</b> und <b>ein bis zwei vollständigen Argumenten</b>.",
+    blocks:[
+      {type:"info", title:"So funktioniert die Sanduhr", html:`<table class="t"><tr><td style="width:40%"><b>Überleitung</b> zur Erörterung</td><td>„Doch überzeugt diese Position? Im Folgenden soll erörtert werden, ob …“</td></tr>
+        <tr><td><b>These</b> (Autorenmeinung)</td><td>„Für Bräunigs Position spricht, dass …“</td></tr>
+        <tr><td>Argument 1 (schwächer)</td><td>Behauptung → Begründung → Beispiel/Beleg → Rückführung</td></tr>
+        <tr><td>Argument 2 (stärker)</td><td>Behauptung → Begründung → Beispiel/Beleg → Rückführung</td></tr>
+        <tr><td colspan="2" style="text-align:center;color:var(--muted)">⌛ danach: Gegenthese und Gegenargumente (nächster Schritt)</td></tr></table>`},
+      {type:"check", id:"c_these", title:"Checkliste Autorenmeinung", items:[
+        "Ich leite mit einer Frage oder einem Satz zur Erörterung über.",
+        "Ich formuliere eine klare <b>These</b>.",
+        "Ich führe <b>ein bis zwei</b> Argumente aus – das stärkere steht am Schluss.",
+        "Jedes Argument hat <b>Behauptung, Begründung, Beispiel/Beleg und Rückführung</b>.",
+        "Ich beziehe mich auf <b>Bräunigs Argumente</b> („Ananda Bräunig betont, dass …“).",
+        "Ich <b>ergänze</b> die Argumente der Autorin, wo sie unvollständig sind (z. B. mit M2).",
+        "Ich schreibe <b>objektiv</b> – ohne „ich“ und „meiner Meinung nach“."]},
+      {type:"help", kind:"muster", title:"Muster: Überleitung, These und zwei Argumente", html:mu(12,13,14,15), openFor:["basis"]},
+      {type:"help", kind:"formul", title:"Formulierungshilfen", html:chips(["Doch überzeugt diese Position? Im Folgenden soll erörtert werden, ob Ego-Shooter tatsächlich als Teil der Alltagskultur anerkannt werden sollten.","Für Bräunigs Position spricht, dass","Ananda Bräunig betont, dass","Diese Aussage lässt sich durch Zahlen belegen:","(vgl. M2)","Ergänzen muss man deshalb, dass","Hinzu kommt, dass","Ein weiterer, sogar noch wichtigerer Aspekt besteht darin, dass","Zum Beispiel","Deshalb","Auch dieses Argument zeigt, dass"]), chipsFor:"these", openFor:["basis","standard"]},
+      {type:"builder", id:"b_these", target:"these", title:"Argument-Baukasten", intro:"Baue ein Argument aus den vier Bausteinen. Mit dem Knopf wird daraus ein Absatz in deinem Textfeld unten. Für ein zweites Argument: Felder überschreiben und noch einmal zusammensetzen.", fields:ARG_FIELDS, levels:["basis","standard"]},
+      {type:"write", id:"these", task:true, label:"Mein überarbeiteter Block zur Autorenmeinung", rows:14,
+        starters:{basis:"Doch überzeugt diese Position? Im Folgenden soll erörtert werden, ob Ego-Shooter tatsächlich als Teil der Alltagskultur anerkannt werden sollten.\n\nFür Bräunigs Position spricht, dass …\n\n[Argument 1] Ananda Bräunig betont, dass … Das liegt daran, dass … Zum Beispiel … Deshalb …\n\n[Argument 2, stärker] Ein weiterer, sogar noch wichtigerer Aspekt besteht darin, dass … Auch dieses Argument zeigt, dass …"}},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag", html:"<p>Bräunigs Beispiele (Wii-Bowling, Lern-Apps) betreffen Computerspiele <b>allgemein</b>. Zeige in einem deiner Argumente ausdrücklich, was das für <b>Ego-Shooter</b> bedeutet – z. B. mit den Zahlen aus M2 (22 % spielen Shooter).</p>", levels:["experte"]}]},
+
+  /* 7 */ {group:"2.2 Erörterung", nav:"2.2.2 Gegenmeinung (Gegenthese)", title:"2.2.2 Argumentationsblock der Gegenmeinung",
+    lead:"Nun kommt die andere Seite der Sanduhr: Überleitung, <b>Gegenthese</b> und <b>ein bis zwei</b> Argumente gegen die Position der Autorin.",
+    blocks:[
+      {type:"check", id:"c_gegen", title:"Checkliste Gegenmeinung", items:[
+        "Ich leite mit einem Satz zur Gegenposition über („Zweifelsohne … Dennoch …“).",
+        "Ich formuliere eine klare <b>Gegenthese</b>.",
+        "Ich führe <b>ein bis zwei</b> Gegenargumente aus – das stärkste steht am Schluss.",
+        "Jedes Argument hat <b>Behauptung, Begründung, Beispiel/Beleg und Rückführung</b>.",
+        "Ich übe <b>Kritik am Text</b>, z. B. an einer Stelle, die die Autorin zu schnell abtut (mit Zeilenangabe).",
+        "Ich stütze mich nur auf Material, das ich kenne, und auf eigene Beispiele.",
+        "Ich schreibe objektiv."]},
+      {type:"help", kind:"muster", title:"Muster: Überleitung, Gegenthese und zwei Gegenargumente", html:mu(16,17,18), openFor:["basis"]},
+      {type:"help", kind:"formul", title:"Formulierungshilfen", html:chips(["Zweifelsohne sprechen also einige Argumente für Bräunigs Position. Dennoch darf nicht vergessen werden, dass","Zu bedenken ist zunächst, dass","Die Aussage der Autorin, …, blendet aus, dass","Das Argument … ist zwar nachvollziehbar, jedoch","Wer behauptet, dass …, lässt außer Acht, dass","Einwenden lässt sich, dass","Das schwerwiegendste Argument ist jedoch, dass","Gerade deshalb","Auch deshalb sollte man"]), chipsFor:"gegen", openFor:["basis","standard"]},
+      {type:"builder", id:"b_gegen", target:"gegen", title:"Argument-Baukasten (Gegenargument)", intro:"Tipp für den Baustein „Begründung“ oder „Beispiel“: Baue eine Kritik an einer Textstelle ein, z. B. an Bräunigs Vergleich mit Filmen (Z. 66 f.).", fields:[
+        {label:"Behauptung", hint:"„Zu bedenken ist, dass …“", ph:"Zu bedenken ist, dass …"},
+        {label:"Begründung", hint:"Warum? „denn …“, „Das liegt daran, dass …“", ph:"Das liegt daran, dass …"},
+        {label:"Beispiel / Beleg / Textkritik", hint:"Alltagsbeispiel oder: „Die Aussage der Autorin, …, blendet aus, dass …“ (mit Z.)", ph:"Zum Beispiel …"},
+        {label:"Rückführung zur Gegenthese", hint:"„Deshalb sollte man Ego-Shooter nicht unkritisch …“", ph:"Deshalb …"}], levels:["basis","standard"]},
+      {type:"write", id:"gegen", task:true, label:"Mein überarbeiteter Block zur Gegenmeinung", rows:14,
+        starters:{basis:"Zweifelsohne sprechen also einige Argumente für Bräunigs Position. Dennoch darf nicht vergessen werden, dass …\n\n[Gegenargument 1] Zu bedenken ist zunächst, dass … Das liegt daran, dass … Zum Beispiel … Auch deshalb …\n\n[Gegenargument 2, stärker] Das schwerwiegendste Argument ist jedoch, dass … Die Aussage der Autorin, „…“ (Z. …), blendet aus, dass … Gerade deshalb …"}},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag", html:"<p>Untersuche Bräunigs <b>Vergleich mit Horror- und Actionfilmen</b> (Z. 62–74): Wo hinkt der Vergleich? Baue deine Kritik mit einem kurzen Zitat in ein Gegenargument ein.</p>", levels:["experte"]}]},
+
+  /* 8 */ {group:"2.2 Erörterung", nav:"2.2.3 Synthese", title:"2.2.3 Synthese (abwägendes Urteil)",
+    lead:"Du wägst beide Seiten ab und kommst zu einem klaren Ergebnis – <b>objektiv formuliert</b> und <b>ohne neue Argumente</b>.",
+    blocks:[
+      {type:"check", id:"c_syn", title:"Checkliste Synthese", items:[
+        "Ich wäge beide Seiten gegeneinander ab.",
+        "Ich beziehe eindeutig Stellung: Ja, Nein oder ein <b>bedingtes Ja</b>.",
+        "Ich nenne Bedingungen (z. B. Altersfreigaben, begrenzte Spielzeiten).",
+        "Ich bringe <b>keine neuen Argumente</b>.",
+        "Ich schreibe <b>ohne Ich-Form</b>.",
+        "Ich runde mit einem Gedanken ab, z. B. einem Rückbezug auf den Text."]},
+      {type:"help", kind:"tipp", title:"Hilfe: Von der Ich-Form zur objektiven Formulierung", html:OBJ, openFor:["basis","standard"]},
+      {type:"help", kind:"muster", title:"Muster: Synthese", html:mu(19), openFor:["basis"]},
+      {type:"help", kind:"formul", title:"Formulierungshilfen", html:chips(["Wägt man die Argumente gegeneinander ab, so zeigt sich, dass","Das bedeutet jedoch nicht, dass","Die Frage, ob Ego-Shooter als Teil der Alltagskultur anerkannt werden sollten, lässt sich daher mit einem bedingten Ja beantworten.","Dies gilt allerdings nur, wenn","Wünschenswert wäre es, dass"]), chipsFor:"syn", openFor:["basis","standard"], levels:["basis","standard"]},
+      {type:"write", id:"syn", task:true, label:"Meine überarbeitete Synthese", rows:7,
+        starters:{basis:"Wägt man die Argumente gegeneinander ab, so zeigt sich, dass … Das bedeutet jedoch nicht, dass … Die Frage, ob …, lässt sich daher mit … beantworten. Dies gilt allerdings nur, wenn … Wünschenswert wäre es, dass …"}},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag", html:"<p>Formuliere zusätzlich eine <b>Bedingung</b>, unter der sich das Urteil ändern würde („Sollte sich zeigen, dass …, müsste man …“).</p>", levels:["experte"]}]},
+
+  /* 9 */ {group:"Abschluss", nav:"Sprache & Formales", title:"Sprache und Formales prüfen",
+    lead:"Gerade hier lassen sich in der Schulaufgabe leicht Punkte holen.",
+    blocks:[
+      {type:"check", id:"c_form", title:"Checkliste Sprache und Formales", items:[
+        "Absätze trennen Einleitung, Textanalyse, Erörterung und Synthese.",
+        "Ich schreibe durchgehend im <b>Präsens</b>.",
+        "Aussagen der Autorin stehen in der <b>indirekten Rede</b>.",
+        "Jedes Zitat hat Anführungszeichen und <b>(Z. …)</b>.",
+        "Ich schreibe <b>objektiv</b> (kein „ich“, „mein“, „wir“, „unsere“ – außer in Zitaten).",
+        "Ich verwende keine Umgangssprache (z. B. „krass“, „voll“, „zocken“).",
+        "Rechtschreibung und Zeichensetzung sind geprüft."]},
+      {type:"help", kind:"tipp", title:"Hilfe: indirekte Rede (Konjunktiv I)", html:KONJ},
+      {type:"help", kind:"tipp", title:"Hilfe: objektiv statt Ich-Form", html:OBJ},
+      {type:"write", id:"probe", label:"Prüf-Feld: Füge einen beliebigen Abschnitt ein (z. B. aus deinem alten Aufsatz) und lass ihn prüfen", rows:6, hint:"Dieser Text erscheint nicht in deinem fertigen Aufsatz."}]},
+
+  /* 10 */ {group:"Abschluss", nav:"Mein überarbeiteter Aufsatz", title:"Mein überarbeiteter Aufsatz",
+    lead:"Hier siehst du alle überarbeiteten Teile zusammen. Leere Teile hast du noch nicht bearbeitet.",
+    blocks:[
+      {type:"final", parts:[{title:"1. Einleitung", ids:["einl"]},{title:"2.1 Textanalyse", ids:["ueber","inhalt","intent"]},{title:"2.2 Erörterung", ids:["these","gegen","syn"]}]},
+      {type:"write", id:"reflex", label:"Rückblick: Was habe ich heute verbessert – und worauf achte ich in der Schulaufgabe besonders?", rows:4, check:false, placeholder:"z. B. Ich nenne jetzt immer die Funktion der Sinnabschnitte …"}]}
+  ]};
+</script><script>/* Gemeinsamer Kern: Schritte, Niveaus, Speichern, Sprach-Check, Export */
+(function(){
+const P = window.PAGE;
+const LV = {basis:"Basis", standard:"Standard", experte:"Experte"};
+let S = {level:null, name:"", v:{}, c:{}, step:0, seen:{}};
+try{ const r = localStorage.getItem(P.key); if(r){ S = Object.assign(S, JSON.parse(r)); } }catch(e){}
+function save(){ try{ localStorage.setItem(P.key, JSON.stringify(S)); }catch(e){} }
+window.STATE = S; window.SAVE = save;
+
+const $ = (t, a={}, ...kids) => { const e = document.createElement(t);
+  for(const k in a){ if(k==="class") e.className=a[k]; else if(k==="html") e.innerHTML=a[k];
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2), a[k]); else e.setAttribute(k,a[k]); }
+  kids.flat().forEach(c => { if(c==null) return; e.append(c.nodeType ? c : document.createTextNode(c)); });
+  return e; };
+window.$el = $;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+window.esc = esc;
+const vis = b => !b.levels || (S.level && b.levels.includes(S.level));
+
+/* ---------- Sprach-Check ---------- */
+function stripQuotes(t){ return t.replace(/„[^“]*“/g, m => " ".repeat(m.length)); }
+function langCheck(text, opts={}){
+  const out = []; const t = text || "";
+  if(!t.trim()) return {cls:"warn", html:"Hier steht noch kein Text."};
+  const nq = stripQuotes(t);
+  const ich = [...nq.matchAll(/\b(ich|mich|mir|meine?[nmrs]?|meiner|wir|uns|unsere?[nmrs]?)\b/gi)].map(m=>m[0]);
+  if(ich.length) out.push(`<b>Ich-/Wir-Form gefunden</b> (${[...new Set(ich.map(w=>w.toLowerCase()))].join(", ")}): Schreibe objektiv, z.&nbsp;B. „Wägt man … ab, so zeigt sich …“ oder „Es spricht dafür, dass …“.`);
+  const ugs = [...nq.matchAll(/\b(krass|voll|halt|mega|echt|cool|okay|ok|eh|zocken|kriegen|kriegt|total|irgendwie|Sachen?)\b/gi)].map(m=>m[0]);
+  if(ugs.length) out.push(`<b>Umgangssprache?</b> (${[...new Set(ugs.map(w=>w.toLowerCase()))].join(", ")}): Ersetze durch sachliche Wörter.`);
+  const past = [...nq.matchAll(/\b(war|waren|hatte|hatten|sagte|schrieb|meinte|erklärte|zeigte|wurde|wurden|ging|kam)\b/gi)].map(m=>m[0]);
+  if(past.length) out.push(`<b>Präteritum?</b> (${[...new Set(past.map(w=>w.toLowerCase()))].join(", ")}): Inhaltsangabe und Erörterung stehen im <b>Präsens</b>.`);
+  const quotes = [...t.matchAll(/„[^“]{3,}“(?!\s*\((Z\.|vgl\.))/g)].length;
+  if(quotes && !opts.noQuoteCheck) out.push(`<b>${quotes} Zitat(e) ohne Zeilenangabe:</b> Setze nach jedem Zitat (Z. …) bzw. bei sinngemäßer Wiedergabe (vgl. Z. …).`);
+  const sents = (t.match(/[^.!?]+[.!?]*/g)||[]).filter(s => s.trim().split(/\s+/).length > 35);
+  if(sents.length) out.push(`<b>${sents.length} sehr lange(r) Satz/Sätze</b> (über 35 Wörter): Teile sie auf, damit dein Text verständlich bleibt.`);
+  if(opts.indirect){
+    const ind = (t.match(/\b(sei|seien|habe|hätten|könne|müsse|solle|gebe|gehöre|werde|dürfe)\b/g)||[]).length;
+    if(ind===0) out.push(`<b>Keine indirekte Rede gefunden:</b> Gib die Aussagen der Autorin im Konjunktiv&nbsp;I wieder (sie <i>sei</i>, <i>habe</i>, <i>müsse</i> …).`);
+  }
+  if(!out.length) return {cls:"ok", html:"Super, der Sprach-Check hat nichts gefunden. Prüfe trotzdem selbst noch einmal Rechtschreibung und Zeichensetzung."};
+  return {cls:"warn", html:"<ul><li>"+out.join("</li><li>")+"</li></ul><small>Der Check ist eine Hilfe, kein Urteil – er findet nicht alles und irrt sich manchmal.</small>"};
+}
+window.langCheck = langCheck;
+const words = t => (t||"").trim() ? t.trim().split(/\s+/).length : 0;
+
+/* ---------- Block-Renderer ---------- */
+const R = {};
+R.info = b => $("div",{class:"card"+(b.task?" task":""), html:(b.title?`<h3>${b.title}</h3>`:"")+b.html});
+R.lvbox = b => $("div",{class:"lvbox "+b.lv, html:`<div class="tag">${b.tag||("Für "+LV[b.lv])}</div>`+b.html});
+R.help = b => { const d=$("details",{class:"help "+(b.kind||"tipp")});
+  if(b.open===true || (b.openFor && b.openFor.includes(S.level))) d.open=true;
+  d.append($("summary",{}, b.title), $("div",{class:"body", html:b.html}));
+  if(b.chipsFor){ d.querySelectorAll(".chip").forEach(ch => ch.addEventListener("click", ()=>insertInto(b.chipsFor, ch.dataset.t || ch.textContent))); }
+  return d; };
+R.check = b => { const arr = S.c[b.id] || (S.c[b.id] = b.items.map(()=>false));
+  const box=$("div",{class:"card checklist"}); if(b.title) box.append($("h3",{},b.title)); if(b.intro) box.append($("p",{html:b.intro}));
+  const cnt=$("div",{class:"count"}); const upd=()=>{cnt.textContent=`${arr.filter(Boolean).length} von ${b.items.length} abgehakt`;};
+  b.items.forEach((it,i)=>{ const cb=$("input",{type:"checkbox"}); cb.checked=!!arr[i];
+    cb.addEventListener("change",()=>{arr[i]=cb.checked; save(); upd();});
+    box.append($("label",{},cb,$("span",{html:it}))); });
+  upd(); box.append(cnt); return box; };
+function insertInto(id, txt){ const ta=document.getElementById("ta-"+id); if(!ta) return;
+  const s=(ta.selectionStart!=null)?ta.selectionStart:ta.value.length; const se=(ta.selectionEnd!=null)?ta.selectionEnd:s; const before=ta.value.slice(0,s), after=ta.value.slice(se);
+  const pad = before && !/\s$/.test(before) ? " " : "";
+  ta.value = before + pad + txt + after; ta.focus(); const p=(before+pad+txt).length; ta.setSelectionRange(p,p);
+  S.v[id]=ta.value; save(); ta.dispatchEvent(new Event("input")); }
+window.insertInto = insertInto;
+R.write = b => { const box=$("div",{class:"card write"+(b.task?" task":"")});
+  box.append($("label",{class:"lbl", for:"ta-"+b.id, html:b.label}));
+  if(b.hint) box.append($("p",{class:"hint", html:b.hint, style:"font-size:14.5px;color:var(--muted);margin:0 0 6px"}));
+  const ta=$("textarea",{id:"ta-"+b.id, placeholder:b.placeholder||"Schreibe hier …"});
+  if(b.rows) ta.style.minHeight=(b.rows*26)+"px";
+  ta.value = S.v[b.id] || ""; const wc=$("span",{class:"wc"});
+  const upd=()=>{wc.textContent=words(ta.value)+" Wörter";}; ta.addEventListener("input",()=>{S.v[b.id]=ta.value; save(); upd();}); upd();
+  box.append(ta); const row=$("div",{class:"row"});
+  const st = typeof b.starters==="string" ? ((!b.starterLevels || b.starterLevels.includes(S.level)) ? b.starters : null) : (b.starters ? b.starters[S.level] : null);
+  if(st){
+    row.append($("button",{class:"btn ghost small", onclick:()=>{ if(ta.value.trim() && !confirm("Satzanfänge unten an deinen Text anhängen?")) return;
+      ta.value = (ta.value.trim()? ta.value.trim()+"\n\n":"") + st; S.v[b.id]=ta.value; save(); upd(); ta.focus(); }}, "Satzanfänge einfügen"));
+  }
+  if(b.copyFrom){ row.append($("button",{class:"btn ghost small", onclick:()=>{ const src=S.v[b.copyFrom]||""; if(!src.trim()){alert("Im vorherigen Feld steht noch nichts.");return;}
+      if(ta.value.trim() && !confirm("Dein bisheriger Text in diesem Feld wird ersetzt. Fortfahren?")) return; ta.value=src; S.v[b.id]=src; save(); upd(); }}, b.copyLabel||"Alten Text übernehmen")); }
+  const res=$("div");
+  if(b.check!==false){ row.append($("button",{class:"btn small", onclick:()=>{ const r=langCheck(ta.value,{indirect:b.indirect, noQuoteCheck:b.noQuoteCheck}); res.className="result "+r.cls; res.innerHTML=r.html; }}, "Sprach-Check")); }
+  row.append(wc); box.append(row, res); return box; };
+R.builder = b => { const box=$("div",{class:"card"+(b.task?" task":"")}); box.append($("h3",{html:b.title}));
+  if(b.intro) box.append($("p",{html:b.intro}));
+  const g=$("div",{class:"builder"});
+  b.fields.forEach((f,i)=>{ const id=b.id+"_"+i; const ta=$("textarea",{placeholder:f.ph||""}); ta.value=S.v[id]||"";
+    ta.addEventListener("input",()=>{S.v[id]=ta.value; save();});
+    g.append($("div",{class:"bf"}, $("label",{}, $("span",{class:"num"}, String(i+1)), f.label), f.hint?$("div",{class:"hint",html:f.hint}):null, ta)); });
+  box.append(g);
+  box.append($("div",{class:"row"}, $("button",{class:"btn", onclick:()=>{
+    const parts=b.fields.map((f,i)=>(S.v[b.id+"_"+i]||"").trim()).filter(Boolean);
+    if(parts.length<b.fields.length){ if(!confirm("Noch nicht alle Bausteine sind ausgefüllt. Trotzdem zusammensetzen?")) return; }
+    const para=parts.map(p=>/[.!?“]$/.test(p)?p:p+".").join(" ");
+    const cur=(S.v[b.target]||"").trim(); S.v[b.target]=(cur?cur+"\n\n":"")+para; save(); render();
+    setTimeout(()=>{const ta=document.getElementById("ta-"+b.target); if(ta){ta.scrollIntoView({behavior:"smooth",block:"center"}); ta.focus();}},50);
+  }}, b.btn||"Zu einem Absatz zusammensetzen ↓")));
+  return box; };
+R.mc = b => { const box=$("div",{class:"card mc task"}); box.append($("h3",{html:b.q}));
+  const name="mc-"+b.id; const res=$("div");
+  b.options.forEach((o,i)=>{ const r=$("input",{type:"radio",name}); if(S.v[b.id]===i) r.checked=true;
+    r.addEventListener("change",()=>{S.v[b.id]=i; save(); res.className=""; res.innerHTML="";}); box.append($("label",{},r,$("span",{html:o}))); });
+  box.append($("div",{class:"row"},$("button",{class:"btn small", onclick:()=>{ const v=S.v[b.id];
+    if(v==null){res.className="result warn"; res.innerHTML="Wähle zuerst eine Antwort."; return;}
+    const ok=v===b.correct; res.className="result "+(ok?"ok":"bad"); res.innerHTML=(ok?"<b>Richtig!</b> ":"<b>Noch nicht.</b> ")+(ok?b.why:(b.whyWrong||"Lies die Textstelle noch einmal und versuche es erneut.")); }}, "Prüfen")), res);
+  return box; };
+R.custom = b => b.render(S, save, render);
+R.final = b => { const wrap=$("div");
+  const txt = b.parts.map(p=>({title:p.title, body:p.ids.map(id=>(S.v[id]||"").trim()).filter(Boolean).join("\n\n")}));
+  const plain = (P.finalHeader?P.finalHeader(S)+"\n\n":"") + txt.map(p=>p.title.toUpperCase()+"\n"+(p.body||"[noch leer]")).join("\n\n");
+  const prev=$("div",{class:"final-preview"});
+  prev.innerHTML = (P.finalHeader?`<h4>${esc(P.finalHeader(S))}</h4>`:"") + txt.map(p=>`<h4>${esc(p.title)}</h4>`+(p.body?esc(p.body):'<span class="empty">noch leer – gehe zurück zu diesem Schritt</span>')).join("");
+  const res=$("div");
+  const total=txt.reduce((a,p)=>a+words(p.body),0);
+  wrap.append($("div",{class:"row noprint"},
+    $("button",{class:"btn", onclick:()=>{ const blob=new Blob([plain],{type:"text/plain;charset=utf-8"}); const a=$("a",{href:URL.createObjectURL(blob), download:(P.fileName||"Aufsatz")+".txt"}); document.body.append(a); a.click(); a.remove(); }}, "Als Textdatei speichern"),
+    $("button",{class:"btn ghost", onclick:()=>window.print()}, "Drucken / als PDF"),
+    $("button",{class:"btn ghost", onclick:()=>{ navigator.clipboard && navigator.clipboard.writeText(plain).then(()=>{res.className="result ok";res.innerHTML="Text kopiert – du kannst ihn jetzt z. B. in Word einfügen.";},()=>{res.className="result warn";res.innerHTML="Kopieren hat nicht geklappt. Markiere den Text unten und kopiere ihn mit Strg+C.";}); }}, "Kopieren"),
+    $("button",{class:"btn ghost", onclick:()=>{ const r=langCheck(txt.map(p=>p.body).join("\n\n"),{}); res.className="result "+r.cls; res.innerHTML="<b>Sprach-Check für den ganzen Text:</b><br>"+r.html; }}, "Sprach-Check (ganzer Text)"),
+    $("span",{class:"wc"}, total+" Wörter")), res, prev);
+  return wrap; };
+
+/* ---------- Startseite ---------- */
+function renderStart(main){
+  main.append($("div",{class:"hero", html:`<div><div class="kicker">${T.kicker||"Start"}</div><h2>${P.title}</h2><p>${P.intro}</p></div>${T.hero||""}`}));
+  main.append($("h3",{style:"margin:22px 0 4px"},"Wähle dein Niveau"), $("p",{style:"margin:0;color:var(--muted);font-size:15px"},"Du kannst es später jederzeit links in der Leiste ändern."));
+  const lv=$("div",{class:"levels"});
+  const STARS={basis:"viele Hilfen",standard:"einige Hilfen",experte:"wenige Hilfen"};
+  P.levels.forEach(l=>{ lv.append($("button",{class:"lvcard "+l.id+(S.level===l.id?" sel":""), onclick:()=>{S.level=l.id; save(); render();}}, $("span",{class:"stars"},STARS[l.id]), $("b",{},(T.levelNames&&T.levelNames[l.id])||l.name), $("span",{html:l.desc}))); });
+  main.append(lv);
+  if(P.startExtra) main.append($("div",{class:"card", html:P.startExtra}));
+}
+
+/* ---------- Layout ---------- */
+const app=document.getElementById("app");
+const T = P.theme || {}; if(T.id) document.body.classList.add("theme-"+T.id);
+function render(){
+  app.innerHTML="";
+  const side=$("aside",{class:"side collapsed"});
+  side.append($("button",{class:"btn ghost small menu-toggle", onclick:()=>side.classList.toggle("collapsed")},"☰ Schritte"));
+  const brand=$("div",{class:"brand"}); if(T.icon) brand.append($("span",{html:T.icon}));
+  brand.append($("div",{}, $("h1",{},P.short), $("div",{class:"sub",style:"margin:0"},P.sub))); side.append(brand);
+  if(S.level) side.append($("span",{class:"levelpill lv-"+S.level},"Niveau: "+LV[S.level]));
+  const pct=Math.round(100*S.step/(P.steps.length));
+  const pr=$("div",{class:"progress"}); pr.append($("span",{style:`width:${Math.max(pct,3)}%`})); side.append(pr);
+  side.append($("div",{class:"ptext"}, T.progress ? T.progress(pct) : pct+" %"));
+  const ul=$("ul",{class:"nav"});
+  ul.append($("li",{}, $("button",{class:S.step===0?"cur":"", onclick:()=>go(0)}, $("span",{class:"dot"},"★"), "Start")));
+  let lastG=null;
+  P.steps.forEach((st,i)=>{ if(st.group && st.group!==lastG){ ul.append($("li",{class:"grp"},st.group)); lastG=st.group; }
+    const li=$("li",{class:S.seen[i+1]&&S.step!==i+1?"done":""});
+    const b=$("button",{class:S.step===i+1?"cur":"", onclick:()=>go(i+1)}, $("span",{class:"dot"}, S.seen[i+1]?"✓":String(i+1)), st.nav||st.title);
+    if(!S.level) b.disabled=true; li.append(b); ul.append(li); });
+  side.append(ul);
+  const sm=$("div",{class:"small"}); sm.append("Niveau ändern: ");
+  P.levels.forEach((l,i)=>{ sm.append($("button",{onclick:()=>{S.level=l.id; save(); render();}}, l.name)); if(i<P.levels.length-1) sm.append(" · "); });
+  sm.append($("br")); sm.append($("button",{onclick:()=>{ if(confirm("Wirklich alle Eingaben löschen und neu beginnen?")){ try{localStorage.removeItem(P.key);}catch(e){} location.reload(); } }}, "Alles löschen & neu beginnen"));
+  sm.append($("div",{style:"margin-top:8px"},"Deine Eingaben werden automatisch in diesem Browser gespeichert."));
+  side.append(sm);
+  const main=$("main");
+  if(S.step===0){ renderStart(main); }
+  else { const st=P.steps[S.step-1];
+    const head=$("div",{class:"stephead"});
+    head.append($("div",{class:"stepnum", html:`<small>${T.stepWord||"SCHRITT"}</small>${S.step}`}), $("div",{}, $("span",{class:"grouptag"}, (st.group||"")+"  ·  "+S.step+" / "+P.steps.length), $("h2",{html:st.title})));
+    main.append(head);
+    if(S.step===P.steps.length && T.finish) main.append($("div",{class:"finish", html:T.finish}));
+    if(st.lead) main.append($("p",{class:"lead", html:st.lead}));
+    st.blocks.forEach(b=>{ if(vis(b)) main.append(R[b.type](b)); }); }
+  const nav=$("div",{class:"stepnav noprint"});
+  nav.append(S.step>0?$("button",{class:"btn ghost", onclick:()=>go(S.step-1)},"← Zurück"):$("span"));
+  if(S.step<P.steps.length){ const nx=$("button",{class:"btn", onclick:()=>go(S.step+1)}, S.step===0?"Los geht's →":"Weiter →"); if(!S.level) {nx.disabled=true; nx.title="Wähle zuerst ein Niveau";} nav.append(nx); }
+  main.append(nav);
+  app.append(side, main);
+  if(P.source) app.append(...sourceDrawer());
+}
+window.RENDER = render;
+function go(i){ if(i>0 && !S.level) return; if(S.step>0) S.seen[S.step]=true; S.step=Math.max(0,Math.min(P.steps.length,i)); save(); render(); window.scrollTo(0,0); }
+
+/* ---------- Quelltext-Schublade ---------- */
+let drawerOpen=false;
+function sourceDrawer(){
+  const src=P.source; const d=$("div",{class:"drawer"+(drawerOpen?" open":"")});
+  const body=$("div",{class:"src"}); body.append($("h4",{},src.title), $("div",{class:"meta", html:src.meta}));
+  let n=0; src.paras.forEach(lines=>{ lines.forEach((l,j)=>{ n++; body.append($("div",{class:"ln"+(j===0&&n>1?" pstart":"")}, $("i",{}, (n%5===0||n===1)?String(n):""), $("span",{},l))); }); });
+  d.append($("header",{}, $("b",{},src.label||"Text"), $("button",{class:"btn ghost small", onclick:()=>{drawerOpen=false; d.classList.remove("open");}},"Schließen ✕")), $("div",{class:"scroll"},body));
+  const btn=$("button",{class:"btn textbtn noprint", onclick:()=>{drawerOpen=!drawerOpen; d.classList.toggle("open",drawerOpen);}}, "📄 "+(src.button||"Text anzeigen"));
+  return [btn,d];
+}
+render();
+})();
+</script><script>window.__ok=true;</script></body></html>

@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Textbezogen erörtern üben – Handyverbot an Schulen</title><style>:root{
+  --bg:#f6f7f9; --card:#fff; --ink:#1d2433; --muted:#5b6475; --line:#e2e5eb;
+  --accent:#1f5fa8; --accent-soft:#e8f0fb;
+  --basis:#2e8b57; --basis-soft:#e6f4ec;
+  --standard:#1f5fa8; --standard-soft:#e8f0fb;
+  --experte:#6b45b5; --experte-soft:#f0ebfa;
+  --warn:#b4541a; --warn-soft:#fdf0e6; --ok:#2e8b57; --ok-soft:#e6f4ec; --bad:#b3261e; --bad-soft:#fbeaea;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.55}
+button{font:inherit;cursor:pointer}
+.app{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+/* sidebar */
+.side{background:#fff;border-right:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;overflow:auto;align-self:start}
+.side h1{font-size:17px;margin:0 0 4px;line-height:1.3}
+.side .sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+.levelpill{display:inline-block;font-size:12px;font-weight:600;padding:2px 10px;border-radius:99px;color:#fff;margin-bottom:12px}
+.lv-basis{background:var(--basis)} .lv-standard{background:var(--standard)} .lv-experte{background:var(--experte)}
+.nav{list-style:none;margin:0;padding:0}
+.nav li{margin:2px 0}
+.nav button{width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:7px 10px;font-size:14px;color:var(--ink);display:flex;gap:8px;align-items:flex-start}
+.nav button:hover{background:var(--bg)}
+.nav button.cur{background:var(--accent-soft);font-weight:600}
+.nav button:disabled{opacity:.45;cursor:not-allowed}
+.nav .dot{flex:0 0 18px;height:18px;border-radius:50%;border:2px solid var(--line);font-size:11px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.nav .done .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+.nav .grp{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:12px 10px 4px}
+.progress{height:6px;background:var(--line);border-radius:99px;margin:6px 0 16px;overflow:hidden}
+.progress span{display:block;height:100%;background:var(--accent);transition:width .3s}
+.side .small{font-size:13px;margin-top:18px;color:var(--muted)}
+.side .small button{background:none;border:0;color:var(--accent);padding:0;text-decoration:underline;font-size:13px}
+/* main */
+main{padding:28px 36px 80px;max-width:900px;width:100%}
+.steptag{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+main h2{font-size:26px;margin:4px 0 6px;line-height:1.25}
+.lead{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:14px 0}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{margin:6px 0}
+.card ul,.card ol{margin:6px 0;padding-left:22px}
+.task{border-left:5px solid var(--accent)}
+.task h3::before{content:"Aufgabe  ";color:var(--accent)}
+/* level-specific boxes */
+.lvbox{border-radius:var(--radius);padding:14px 18px;margin:14px 0;border:1px solid}
+.lvbox.basis{background:var(--basis-soft);border-color:#bfe1cc}
+.lvbox.standard{background:var(--standard-soft);border-color:#c5d8f1}
+.lvbox.experte{background:var(--experte-soft);border-color:#d8cdf0}
+.lvbox .tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.lvbox.basis .tag{color:var(--basis)} .lvbox.standard .tag{color:var(--standard)} .lvbox.experte .tag{color:var(--experte)}
+/* help */
+details.help{background:#fff;border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;overflow:hidden}
+details.help>summary{cursor:pointer;padding:12px 18px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:center}
+details.help>summary::-webkit-details-marker{display:none}
+details.help>summary::before{content:"▸";transition:transform .2s;color:var(--muted)}
+details.help[open]>summary::before{transform:rotate(90deg)}
+details.help .body{padding:0 18px 14px}
+details.help.muster>summary{color:#7a5a00} details.help.muster{border-left:5px solid #e0b400}
+details.help.tipp>summary{color:var(--warn)} details.help.tipp{border-left:5px solid var(--warn)}
+details.help.formul>summary{color:var(--accent)} details.help.formul{border-left:5px solid var(--accent)}
+details.help.loesung>summary{color:var(--ok)} details.help.loesung{border-left:5px solid var(--ok)}
+.muster-text{background:#fffbea;border-radius:8px;padding:12px 14px;font-family:Georgia,"Times New Roman",serif;font-size:16.5px;margin:8px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{background:var(--accent-soft);border:1px solid #c5d8f1;border-radius:99px;padding:4px 12px;font-size:14.5px;cursor:pointer}
+.chip:hover{background:#d7e6f8}
+.chip.static{cursor:default}
+/* checklist */
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+.checklist label:last-child{border-bottom:0}
+.checklist input{margin-top:5px;width:18px;height:18px;flex:0 0 18px}
+.checklist .count{font-size:13px;color:var(--muted);margin-top:6px}
+/* write */
+.write label.lbl{font-weight:600;display:block;margin-bottom:6px}
+textarea,input[type=text],select{width:100%;font:inherit;border:1px solid #cfd4dc;border-radius:8px;padding:10px 12px;background:#fff;color:var(--ink)}
+textarea{min-height:150px;resize:vertical;line-height:1.55}
+textarea:focus,input:focus,select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.btn{border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:8px;padding:8px 14px;font-size:15px}
+.btn.ghost{background:#fff;color:var(--accent)}
+.btn.small{padding:5px 10px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.wc{font-size:13px;color:var(--muted);margin-left:auto}
+.result{margin-top:10px;border-radius:8px;padding:10px 14px;font-size:15px}
+.result.ok{background:var(--ok-soft);color:#1d5c39}
+.result.warn{background:var(--warn-soft);color:#7a3a10}
+.result.bad{background:var(--bad-soft);color:var(--bad)}
+.result ul{margin:4px 0;padding-left:20px}
+mark.hl{background:#ffe08a;border-radius:3px;padding:0 2px}
+/* builder */
+.builder{display:grid;gap:10px}
+.builder .bf label{font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center}
+.builder .bf .num{background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.builder textarea{min-height:64px}
+.builder .hint{font-size:13.5px;color:var(--muted);margin:2px 0 4px}
+/* mc */
+.mc label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin:6px 0;cursor:pointer}
+.mc label:hover{background:var(--bg)}
+.mc input{margin-top:5px}
+/* footer nav */
+.stepnav{display:flex;justify-content:space-between;margin-top:28px;gap:10px}
+/* level choice */
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.lvcard{border:2px solid var(--line);border-radius:var(--radius);padding:16px;background:#fff;text-align:left}
+.lvcard:hover{border-color:#b9c2cf}
+.lvcard.sel.basis{border-color:var(--basis);background:var(--basis-soft)}
+.lvcard.sel.standard{border-color:var(--standard);background:var(--standard-soft)}
+.lvcard.sel.experte{border-color:var(--experte);background:var(--experte-soft)}
+.lvcard b{display:block;font-size:17px;margin-bottom:4px}
+.lvcard.basis b{color:var(--basis)} .lvcard.standard b{color:var(--standard)} .lvcard.experte b{color:var(--experte)}
+.lvcard span{font-size:14.5px;color:var(--muted)}
+/* tables */
+table.t{border-collapse:collapse;width:100%;font-size:15px;margin:8px 0}
+table.t th,table.t td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+table.t th{background:var(--bg)}
+/* source text drawer */
+.textbtn{position:fixed;right:20px;top:16px;z-index:20;box-shadow:0 4px 14px rgba(0,0,0,.18);border-radius:99px;padding:12px 18px}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(560px,94vw);background:#fff;box-shadow:-6px 0 24px rgba(0,0,0,.15);z-index:30;transform:translateX(105%);transition:transform .25s;display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.drawer header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.drawer .scroll{overflow:auto;padding:16px 18px 40px}
+.src h4{margin:0 0 2px;font-size:19px;font-family:Georgia,serif}
+.src .meta{font-size:13px;color:var(--muted);margin-bottom:12px}
+.src .ln{display:grid;grid-template-columns:34px 1fr;font-family:Georgia,"Times New Roman",serif;font-size:16px;line-height:1.6}
+.src .ln i{font-style:normal;color:#9aa3b2;font-family:system-ui,sans-serif;font-size:12px;text-align:right;padding-right:10px;padding-top:3px}
+.src .ln.pstart{margin-top:8px}
+/* sorter */
+.sorter{display:grid;gap:8px}
+.scard{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.scard .opts{display:flex;gap:6px}
+.scard .opts button{border:1px solid #cfd4dc;background:#fff;border-radius:8px;padding:5px 10px;font-size:14px}
+.scard .opts button.on.pro{background:var(--ok-soft);border-color:var(--ok);color:#1d5c39;font-weight:600}
+.scard .opts button.on.kontra{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);font-weight:600}
+.scard.right{border-color:var(--ok)} .scard.wrong{border-color:var(--bad)}
+.hourglass{display:grid;grid-template-columns:1fr;gap:10px}
+.hg-block{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff}
+.hg-block h4{margin:0 0 8px;font-size:15px}
+.hg-block .sel{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin:6px 0;font-size:14.5px}
+.final-preview{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;font-family:Georgia,"Times New Roman",serif;font-size:16.5px;white-space:pre-wrap}
+.final-preview h4{font-family:system-ui,sans-serif;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 4px}
+.final-preview h4:first-child{margin-top:0}
+.empty{color:#a0a7b4;font-style:italic}
+.menu-toggle{display:none}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .side.collapsed .nav,.side.collapsed .small{display:none}
+  .menu-toggle{display:inline-block;margin-bottom:8px}
+  main{padding:20px 16px 90px}
+  .levels{grid-template-columns:1fr}
+}
+@media print{
+  .side,.stepnav,.textbtn,.drawer,.noprint,.lead,.steptag,main>h2,.stephead,.hero,.finish{display:none!important}
+  body{background:#fff}
+  .app{display:block}
+  main{padding:0;max-width:none}
+  .final-preview{border:0;padding:0}
+}
+
+/* ================= THEMES ================= */
+.card{box-shadow:0 1px 2px rgba(20,30,60,.04),0 4px 14px rgba(20,30,60,.05);border-radius:16px}
+details.help{border-radius:14px}
+.btn{border-radius:10px;font-weight:600;transition:transform .08s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.task{border-left:0;position:relative;overflow:hidden}
+.task::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+.task h3::before{color:var(--accent)}
+/* sidebar brand */
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.brand svg{width:46px;height:46px;flex:0 0 46px}
+.brand h1{margin:0}
+.ptext{font-size:12px;font-weight:700;letter-spacing:.04em;margin:-10px 0 14px;opacity:.85}
+/* step header */
+.stephead{display:flex;gap:16px;align-items:center;margin:0 0 6px}
+.stepnum{flex:0 0 58px;height:58px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:24px;line-height:1;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 6px 16px rgba(0,0,0,.15)}
+.stepnum small{font-size:9px;font-weight:700;letter-spacing:.08em;opacity:.9;margin-bottom:3px}
+.stephead h2{margin:2px 0 0}
+.grouptag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:3px 10px;border-radius:99px}
+/* hero */
+.hero{border-radius:22px;padding:30px 32px;color:#fff;display:grid;grid-template-columns:1fr 210px;gap:20px;align-items:center;margin-bottom:8px;position:relative;overflow:hidden}
+.hero h2{color:#fff;font-size:30px;margin:6px 0 10px}
+.hero p{margin:0;opacity:.92;font-size:16.5px}
+.hero .kicker{font-size:12.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.hero svg{width:100%;height:auto}
+.lvcard{position:relative;border-radius:16px;transition:transform .1s, box-shadow .15s}
+.lvcard:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.08)}
+.lvcard .stars{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px;opacity:.85}
+.lvcard.basis .stars{color:var(--basis)} .lvcard.standard .stars{color:var(--standard)} .lvcard.experte .stars{color:var(--experte)}
+.finish{border-radius:18px;padding:18px 22px;color:#fff;display:flex;gap:16px;align-items:center;margin:10px 0 16px}
+.finish .big{font-size:38px;line-height:1}
+.finish b{font-size:18px;display:block}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.hero svg{max-width:180px}}
+
+/* ---------- WRITE (Schreibwerkstatt / Überarbeiten) ---------- */
+body.theme-write{--accent:#2b5aa8;--accent2:#5b8bd6;--accent-soft:#e8eff9;--standard:#2b5aa8;--standard-soft:#e8eff9;
+  background:#f5f3ee}
+.theme-write .side{background:#1f3a66;color:#fff;border-right:0}
+.theme-write .side .sub,.theme-write .side .small,.theme-write .nav .grp{color:#b9c9e4}
+.theme-write .side .small button{color:#ffe2a8}
+.theme-write .nav button{color:#fff}
+.theme-write .nav button:hover{background:rgba(255,255,255,.1)}
+.theme-write .nav button.cur{background:#fff;color:#1f3a66}
+.theme-write .nav .dot{border-color:rgba(255,255,255,.45);color:#fff}
+.theme-write .nav button.cur .dot{border-color:#2b5aa8;color:#2b5aa8}
+.theme-write .nav .done .dot{background:#e8b04a;border-color:#e8b04a;color:#1f3a66}
+.theme-write .progress{background:rgba(255,255,255,.2)}
+.theme-write .progress span{background:#e8b04a}
+.theme-write .ptext{color:#dfe7f4;font-weight:600}
+.theme-write .menu-toggle{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.4)}
+.theme-write .hero{background:linear-gradient(135deg,#1f3a66 0%,#2b5aa8 100%)}
+.theme-write .finish{background:#1f3a66}
+.theme-write .muster-text{background:#fffdf6;border:1px solid #efe4c8;border-left:4px solid #e8b04a}
+
+/* ---------- PHONE (Handyverbot) ---------- */
+body.theme-phone{--accent:#0e8a8c;--accent2:#ff7a59;--accent-soft:#e3f4f4;--standard:#0e8a8c;--standard-soft:#e3f4f4;
+  background:#eef5f6 linear-gradient(180deg,#e4f1f2,#f4f7f9 400px)}
+.theme-phone .side{background:linear-gradient(180deg,#0e6f78 0%,#1d4f73 100%);color:#fff;border-right:0}
+.theme-phone .side .sub,.theme-phone .side .small,.theme-phone .nav .grp{color:#bfe3e6}
+.theme-phone .side .small button{color:#ffd0c2}
+.theme-phone .nav button{color:#fff;border-radius:14px}
+.theme-phone .nav button:hover{background:rgba(255,255,255,.12)}
+.theme-phone .nav button.cur{background:#fff;color:#0e6f78}
+.theme-phone .nav .dot{border-color:rgba(255,255,255,.5);color:#fff}
+.theme-phone .nav button.cur .dot{border-color:#0e8a8c;color:#0e8a8c}
+.theme-phone .nav .done .dot{background:#ff7a59;border-color:#ff7a59;color:#fff}
+.theme-phone .progress{background:rgba(255,255,255,.18);height:16px;border-radius:5px;border:2px solid rgba(255,255,255,.85);position:relative;overflow:visible;margin-right:8px}
+.theme-phone .progress::after{content:"";position:absolute;right:-7px;top:3px;width:4px;height:6px;background:rgba(255,255,255,.85);border-radius:0 2px 2px 0}
+.theme-phone .progress span{background:linear-gradient(90deg,#7ee0a1,#3cc47a);border-radius:2px;margin:1px;height:calc(100% - 2px)}
+.theme-phone .ptext{color:#fff}
+.theme-phone .menu-toggle{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.4)}
+.theme-phone .hero{background:linear-gradient(135deg,#0e8a8c 0%,#1d4f73 70%,#2c3e74 100%)}
+.theme-phone .finish{background:linear-gradient(135deg,#0e8a8c,#ff7a59)}
+.theme-phone .stepnum{border-radius:18px}
+.theme-phone .card{border-radius:20px}
+.theme-phone .chip{background:#e3f4f4;border-color:#bfe3e3;border-radius:16px 16px 16px 4px} .theme-phone .chip:hover{background:#d1eded}
+.theme-phone .muster-text{border-radius:16px 16px 16px 4px}
+.theme-phone .textbtn{background:linear-gradient(135deg,#ff7a59,#f2603c);border-color:#f2603c}
+.theme-phone .drawer header{background:#0e6f78;color:#fff}
+.theme-phone .drawer header .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.6)}
+@media print{body.theme-write,body.theme-phone{background:#fff}}
+.lvcard{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start}
+</style></head>
+<body><div id="app" class="app"><div id="loadmsg" style="padding:30px;font-family:sans-serif;font-size:18px">Die Übung wird geladen …</div></div>
+<script>window.onerror=function(m){var e=document.getElementById("app");if(e&&!window.__ok){e.innerHTML='<div style="padding:30px;font-family:sans-serif;font-size:18px;max-width:640px"><b>Die Übung konnte nicht gestartet werden.</b><br><br>Bitte öffne die Datei in einem aktuellen Browser (Chrome, Edge, Firefox oder Safari) und nicht in einer Vorschau. Lade sie dazu zuerst herunter und öffne sie dann mit dem Browser.<br><br><small>Fehler: '+String(m).replace(/</g,"&lt;")+'</small></div>';}};</script>
+<noscript><p style="padding:20px">Bitte JavaScript aktivieren, damit die Übung funktioniert.</p></noscript>
+<script>const SRC = {"title": "Jana Berger: Kopf an – gerade beim Handy! Warum ein Handyverbot an Schulen der falsche Weg ist", "meta": "Übungstext: fiktiver Kommentar, für den Unterricht verfasst (2026). Autorin und Text sind erfunden.", "label": "M1: Übungstext", "button": "Text M1 anzeigen", "paras": [["Wer heute in der großen Pause über einen Schulhof geht, sieht", "ein vertrautes Bild: Grüppchen von Jugendlichen, die Köpfe", "über ihre Displays gebeugt. Für viele Erwachsene ist das ein", "Albtraum. Kein Wunder also, dass die Forderung immer lauter", "wird, Smartphones an Schulen komplett zu verbieten. Einige", "Schulen haben das bereits getan: Das Handy bleibt morgens im", "Spind und wird erst nach dem Unterricht wieder eingeschaltet."], ["So verständlich der Wunsch nach Ruhe ist – ein generelles", "Handyverbot ist der falsche Weg. Smartphones gehören längst", "zum Alltag junger Menschen, und genau deshalb muss die Schule", "ihnen beibringen, verantwortungsvoll damit umzugehen, statt", "die Geräte einfach wegzusperren."], ["Schon ein Blick auf die Zahlen zeigt, wie selbstverständlich", "das Smartphone geworden ist. Laut der jährlich erscheinenden", "JIM-Studie besitzen nahezu alle Jugendlichen zwischen 12 und", "19 Jahren ein eigenes Smartphone. Sie nutzen es nicht nur zum", "Chatten und Spielen, sondern auch, um den Busfahrplan zu", "prüfen, Termine zu organisieren oder Vokabeln zu lernen. Wer", "das Handy aus der Schule verbannt, verbannt also einen", "wichtigen Teil ihrer Lebenswelt."], ["Hinzu kommt, dass Smartphones den Unterricht bereichern", "können. Im Fach Geschichte lassen sich Quellen in Sekunden", "recherchieren, in Biologie können Schülerinnen und Schüler", "Pflanzen per App bestimmen, und mit einer Umfrage-App erfährt", "die Lehrkraft sofort, ob alle den Stoff verstanden haben.", "Übrigens: Auch der Taschenrechner galt einmal als Gefahr für", "das Denken. Heute käme niemand auf die Idee, ihn aus dem", "Matheunterricht zu verbannen."], ["Natürlich haben Kritiker in manchen Punkten recht. Smartphones", "lenken ab, und Benachrichtigungen reißen viele aus der", "Konzentration. Auch Cybermobbing ist ein ernstes Problem, das", "oft über Klassenchats beginnt. Doch ein Verbot löst diese", "Probleme nicht, es verschiebt sie nur: Spätestens nach", "Schulschluss sind die Handys wieder an – dann aber, ohne dass", "ein Erwachsener in der Nähe ist, der hilft oder eingreift."], ["Viele Medienpädagoginnen und Medienpädagogen betonen deshalb,", "dass Medienkompetenz nur durch Übung entsteht. Niemand lernt", "Fahrradfahren, indem man ihm das Fahrrad wegnimmt. Genauso", "müssen Jugendliche lernen, Falschmeldungen zu erkennen, ihre", "Bildschirmzeit einzuschätzen und respektvoll miteinander zu", "schreiben. Wo, wenn nicht in der Schule, soll das geschehen?"], ["Statt eines Verbots braucht es deshalb klare Regeln, die", "Lehrkräfte, Eltern und Schüler gemeinsam vereinbaren. Denkbar", "sind etwa handyfreie Pausenzonen, in denen bewusst Fußball", "gespielt oder geredet wird, und sogenannte Handygaragen, in", "die die Geräte während des Unterrichts wandern – es sei denn,", "sie werden gezielt gebraucht. Wer gegen die Regeln verstößt,", "muss mit Konsequenzen rechnen."], ["Schule soll junge Menschen auf das Leben vorbereiten. Zu", "diesem Leben gehört das Smartphone – mit all seinen Chancen", "und Risiken. Deshalb sollte das Motto nicht lauten: „Handy", "aus, Kopf an“, sondern: „Kopf an – gerade beim Handy.“"]]};
+const H = {
+ "einl": "Klingeln, Vibrieren, ein kurzer Blick aufs Display: Für die meisten Jugendlichen gehört das Smartphone so selbstverständlich zum Alltag wie der Schulrucksack. Gleichzeitig wächst die Sorge, dass Handys in der Schule vor allem ablenken. Einige Schulen haben deshalb bereits strenge Handyverbote eingeführt. Daher stellt sich die Frage: Sollten Smartphones an Schulen generell verboten werden?",
+ "ueber": "Mit dieser Frage beschäftigt sich Jana Berger in ihrem Kommentar „Kopf an – gerade beim Handy! Warum ein Handyverbot an Schulen der falsche Weg ist“ aus dem Jahr 2026. Die Autorin vertritt die These, dass ein generelles Handyverbot der falsche Weg sei, weil Smartphones zum Alltag junger Menschen gehörten und die Schule deshalb einen verantwortungsvollen Umgang mit ihnen vermitteln müsse. Im Folgenden werden zunächst Inhalt und Aufbau des Kommentars untersucht, anschließend wird ihre Position erörtert.",
+ "sa": [
+  "Im ersten Sinnabschnitt (Z. 1–7) steigt die Autorin in das Thema ein, indem sie eine alltägliche Beobachtung schildert: Auf Schulhöfen blickten viele Jugendliche in den Pausen auf ihre Displays. Sie verweist darauf, dass deshalb immer häufiger ein Handyverbot gefordert werde.",
+  "Im zweiten Sinnabschnitt (Z. 8–12) stellt Berger ihre zentrale These auf: Ein generelles Handyverbot sei „der falsche Weg“ (Z. 9). Da Smartphones zum Alltag junger Menschen gehörten, müsse die Schule einen verantwortungsvollen Umgang mit ihnen vermitteln.",
+  "Im dritten Sinnabschnitt (Z. 13–20) führt sie ihr erstes Argument an und belegt es mit Fakten: Laut der JIM-Studie besäßen nahezu alle Jugendlichen ein eigenes Smartphone und nutzten es auch für Alltägliches wie den Busfahrplan oder das Vokabellernen (vgl. Z. 14–18).",
+  "Im vierten Sinnabschnitt (Z. 21–28) ergänzt die Verfasserin ein zweites Argument: Smartphones könnten den Unterricht bereichern. Sie veranschaulicht dies durch Beispiele wie Recherchen im Geschichtsunterricht und zieht einen Vergleich mit dem Taschenrechner, der früher ebenfalls als Gefahr gegolten habe.",
+  "Im fünften Sinnabschnitt (Z. 29–35) greift Berger die Einwände der Kritiker auf und räumt ein, dass Smartphones ablenkten und Cybermobbing ein ernstes Problem sei. Sie entkräftet diese Einwände jedoch, indem sie betont, dass ein Verbot die Probleme nur nach Schulschluss verschiebe.",
+  "Im sechsten Sinnabschnitt (Z. 36–41) bekräftigt sie ihre Position, indem sie auf Medienpädagogen verweist, nach denen Medienkompetenz nur durch Übung entstehe. Mit einem Vergleich zum Fahrradfahren und der rhetorischen Frage „Wo, wenn nicht in der Schule, soll das geschehen?“ (Z. 41) unterstreicht sie die Verantwortung der Schule.",
+  "Im siebten Sinnabschnitt (Z. 42–48) formuliert die Autorin einen Lösungsvorschlag: Statt eines Verbots brauche es klare, gemeinsam vereinbarte Regeln, etwa handyfreie Pausenzonen und Handygaragen während des Unterrichts.",
+  "Im achten und letzten Sinnabschnitt (Z. 49–52) zieht sie ein Fazit: Schule solle auf das Leben vorbereiten, zu dem das Smartphone gehöre. Abschließend appelliert sie, indem sie das Motto „Handy aus, Kopf an“ (Z. 51 f.) umkehrt, gerade beim Umgang mit dem Handy den Kopf einzuschalten."
+ ],
+ "intent": "In ihrem meinungsbildenden Kommentar plädiert Jana Berger dafür, Smartphones nicht aus den Schulen zu verbannen, sondern den Umgang mit ihnen durch klare Regeln bewusst zu üben. Sie appelliert an Schulen und Eltern, Medienkompetenz zu fördern.",
+ "ueberE": "Doch überzeugt diese Position? Im Folgenden soll erörtert werden, ob Smartphones an Schulen tatsächlich nicht generell verboten werden sollten.",
+ "these": "Für Bergers Position spricht, dass ein generelles Handyverbot an Schulen der falsche Weg ist.",
+ "arg1": "Jana Berger betont, dass Smartphones den Unterricht bereichern könnten (vgl. Z. 21–25). Dieser Gedanke überzeugt, denn mit dem Handy lassen sich Informationen schnell finden und Lerninhalte abwechslungsreich üben. Zum Beispiel können Schülerinnen und Schüler im Englischunterricht unbekannte Wörter sofort nachschlagen oder mit einer Lern-App Vokabeln wiederholen. Außerdem müssen sie so nicht erst auf einen freien Computerraum warten. Allerdings nennt die Autorin vor allem Beispiele, bei denen die Lehrkraft den Einsatz plant. Ergänzen muss man deshalb, dass das Smartphone auch beim selbstständigen Lernen hilft, etwa wenn bei einer Gruppenarbeit ein Erklärvideo angeschaut wird. Wer das Handy aus der Schule verbannt, verschenkt also wertvolle Lernmöglichkeiten. Deshalb spricht auch dieses Argument gegen ein generelles Verbot.",
+ "arg2": "Ein weiterer, sogar noch wichtigerer Aspekt besteht darin, dass Medienkompetenz nur durch Übung entsteht. Jana Berger betont, dass Jugendliche lernen müssten, Falschmeldungen zu erkennen und ihre Bildschirmzeit einzuschätzen (vgl. Z. 38–41). Das liegt daran, dass diese Fähigkeiten nicht von allein entstehen: Wer das Smartphone nur in der Freizeit nutzt, lernt den Umgang damit oft nebenbei und ohne Anleitung. Gerade weil Falschmeldungen oft sehr glaubwürdig wirken, reicht es nicht, nur darüber zu sprechen – man muss das Prüfen selbst ausprobieren. Zum Beispiel können Schülerinnen und Schüler im Unterricht gemeinsam prüfen, ob eine Meldung aus den sozialen Medien stimmt, und dabei erfahren, woran man unseriöse Quellen erkennt. Solche Fähigkeiten brauchen sie im Alltag ständig. Auch dieses Argument zeigt, dass ein generelles Handyverbot der falsche Weg ist, denn nur was geübt wird, kann auch gelernt werden.",
+ "gegenthese": "Zweifelsohne sprechen also einige Argumente für Bergers Position. Dennoch darf nicht vergessen werden, dass ein Handyverbot an Schulen durchaus sinnvoll sein kann.",
+ "geg1": "Zu bedenken ist zunächst, dass Smartphones das Miteinander in den Pausen verändern. Viele Jugendliche verbringen die Pause mit Blick auf ihr Display, statt sich zu unterhalten oder zu bewegen. Zum Beispiel sitzen in vielen Pausenhallen ganze Gruppen nebeneinander, ohne miteinander zu sprechen. Gerade nach mehreren Stunden Unterricht wären Gespräche und Bewegung aber ein wichtiger Ausgleich. Die Autorin beschreibt diese Szene zwar selbst (vgl. Z. 1–3), schlägt aber nur handyfreie Pausenzonen vor (vgl. Z. 43–45). Dabei blendet sie aus, dass ein Handy, das in der Tasche vibriert, auch außerhalb einer solchen Zone ablenkt. Ein Verbot würde dagegen dafür sorgen, dass die Pause wieder Raum für echte Begegnungen bietet. Auch deshalb kann ein Handyverbot sinnvoll sein.",
+ "geg2": "Das schwerwiegendste Argument ist jedoch, dass Smartphones stark ablenken. Schon eine einzige Benachrichtigung kann die Konzentration unterbrechen, und viele Jugendliche greifen fast automatisch zum Handy, sobald es vibriert. Zum Beispiel genügt eine aufleuchtende Nachricht aus dem Klassenchat, und die Gedanken sind nicht mehr bei der Matheaufgabe. Die Autorin räumt dieses Problem zwar ein (vgl. Z. 29–31), blendet aber aus, wie schwer es vielen fällt, sich selbst an Regeln wie eine Handygarage zu halten. Ein klares Verbot schafft dagegen ungestörte Lernzeit für alle. Davon profitieren auch diejenigen, die selbst diszipliniert sind, aber durch das Vibrieren fremder Geräte gestört werden. Deshalb spricht einiges dafür, Smartphones zumindest aus dem Unterricht herauszuhalten.",
+ "syn": "Wägt man die Argumente gegeneinander ab, so zeigt sich, dass ein generelles Handyverbot an Schulen nicht die beste Lösung ist. Die Gefahr der Ablenkung ist zwar ernst zu nehmen, doch den verantwortungsvollen Umgang mit dem Smartphone lernen Jugendliche nur, wenn sie ihn üben dürfen. Die Frage, ob Smartphones an Schulen generell verboten werden sollten, lässt sich daher mit Nein beantworten – allerdings nur, wenn verbindliche Regeln gelten, etwa handyfreie Zeiten im Unterricht. Denn ein Verbot würde die Probleme, wie die Autorin zu Recht betont, nur in die Freizeit verschieben. Wünschenswert wäre es, dass Schülerinnen und Schüler, Lehrkräfte und Eltern diese Regeln gemeinsam festlegen."
+};
+const RANGES = [[1, 7], [8, 12], [13, 20], [21, 28], [29, 35], [36, 41], [42, 48], [49, 52]];
+const chips = a => '<p style="font-size:14px;color:var(--muted);margin:0 0 4px">Klicke auf eine Formulierung, um sie an der Cursor-Position in dein Textfeld einzufügen.</p><div class="chips">'+a.map(x=>`<span class="chip">${x}</span>`).join("")+'</div>';
+const sol = (...t) => t.map(x=>`<div class="muster-text">${x}</div>`).join("");
+const Z = i => `Z. ${RANGES[i][0]}–${RANGES[i][1]}`;
+const ORD = ["ersten","zweiten","dritten","vierten","fünften","sechsten","siebten","achten"];
+const KONJ = `<p>Aussagen der Autorin gibst du in der <b>indirekten Rede (Konjunktiv I)</b> wieder. Ist der Konjunktiv I gleich wie der Indikativ, nimmst du den Konjunktiv II.</p>
+<table class="t"><tr><th>Indikativ</th><th>Konjunktiv</th><th>Indikativ</th><th>Konjunktiv</th></tr>
+<tr><td>ist / sind</td><td>sei / seien</td><td>hat / haben</td><td>habe / hätten</td></tr>
+<tr><td>muss</td><td>müsse</td><td>kann / können</td><td>könne / könnten</td></tr>
+<tr><td>soll</td><td>solle</td><td>gehört / gehören</td><td>gehöre / gehörten</td></tr>
+<tr><td>braucht</td><td>brauche</td><td>besitzen</td><td>besäßen</td></tr></table>`;
+const OBJ = `<table class="t"><tr><th>Statt (Ich-Form) …</th><th>… besser objektiv</th></tr>
+<tr><td>Ich finde, dass …</td><td>Es spricht vieles dafür, dass …</td></tr>
+<tr><td>Meiner Meinung nach …</td><td>Insgesamt zeigt sich, dass …</td></tr>
+<tr><td>Ich komme zu dem Schluss, dass …</td><td>Wägt man die Argumente ab, so zeigt sich, dass …</td></tr>
+<tr><td>Mein Fazit lautet: …</td><td>Die Frage, ob …, lässt sich mit … beantworten.</td></tr>
+<tr><td>Ich wünsche mir, dass …</td><td>Wünschenswert wäre es, dass …</td></tr></table>`;
+
+/* ---- Sinnabschnitte ---- */
+const SA = [
+ {i:"Beobachtung auf dem Schulhof: Jugendliche über Displays gebeugt; Forderung nach komplettem Handyverbot; manche Schulen haben es schon", f:0},
+ {i:"Verbot ist „der falsche Weg“; Smartphones gehören zum Alltag, Schule soll verantwortungsvollen Umgang beibringen", f:1},
+ {i:"JIM-Studie: fast alle 12- bis 19-Jährigen besitzen ein Smartphone; Nutzung auch für Busfahrplan, Termine, Vokabeln", f:2},
+ {i:"Smartphones bereichern den Unterricht: Recherche, Pflanzen-App, Umfrage-App; Vergleich mit dem Taschenrechner", f:3},
+ {i:"Kritik teilweise berechtigt (Ablenkung, Cybermobbing); aber Verbot verschiebt Probleme nur nach Schulschluss", f:4},
+ {i:"Medienpädagogen: Medienkompetenz entsteht nur durch Übung; Vergleich Fahrradfahren; rhetorische Frage", f:5},
+ {i:"klare, gemeinsam vereinbarte Regeln: handyfreie Pausenzonen, Handygaragen, Konsequenzen", f:6},
+ {i:"Schule bereitet aufs Leben vor, dazu gehört das Smartphone; Umkehrung des Mottos „Handy aus, Kopf an“", f:7}];
+const FUNK = ["Einstieg über eine Beobachtung; aktuelles Problem darstellen","zentrale These aufstellen","Argument anführen und mit Fakten belegen","Argument durch Beispiele und einen Vergleich veranschaulichen","Gegenargument aufgreifen und entkräften","Position durch Experten und einen Vergleich bekräftigen","Lösungsvorschlag / Forderung formulieren","Fazit ziehen und appellieren"];
+const FUNK_ORDER = [3,6,0,5,1,7,2,4];
+const SA_TABLE = `<table class="t"><tr><th>Zeilen</th><th>Inhalt</th><th>Funktion</th></tr>`+SA.map((s,i)=>`<tr><td>${Z(i)}</td><td>${s.i}</td><td>${FUNK[s.f]}</td></tr>`).join("")+`</table>`;
+
+function renderSA(S, save){
+  const $=window.$el; const lv=S.level; const box=$("div",{class:"card task"});
+  box.append($("h3",{},"Gliedere den Text in Sinnabschnitte"));
+  box.append($("p",{html: lv==="basis" ? "Die Zeilen sind vorgegeben. Notiere den Inhalt in Stichpunkten und wähle die passende <b>Funktion</b> aus der Liste. Dann klicke auf „Prüfen“."
+    : lv==="standard" ? "Die Zeilen sind vorgegeben. Notiere zu jedem Abschnitt den Inhalt in Stichpunkten und formuliere die <b>Funktion</b> selbst. Vergleiche dann mit der Lösung."
+    : "Bestimme die Sinnabschnitte <b>selbst</b> (acht Abschnitte, Zeile von–bis), notiere Inhalt und Funktion. „Prüfen“ vergleicht deine Zeilen mit der Lösung."}));
+  const tbl=$("table",{class:"t"}); tbl.append($("tr",{html:"<th style='width:110px'>Zeilen</th><th>Inhalt (Stichpunkte)</th><th style='width:34%'>Funktion</th>"}));
+  const rows=[];
+  SA.forEach((s,i)=>{ const tr=$("tr"); rows.push(tr);
+    let zc;
+    if(lv==="experte"){ zc=$("td"); const a=$("input",{type:"text",placeholder:"von",style:"width:44px;padding:5px"}), b=$("input",{type:"text",placeholder:"bis",style:"width:44px;padding:5px"});
+      a.value=S.v[`sa${i}_a`]||""; b.value=S.v[`sa${i}_b`]||""; a.oninput=()=>{S.v[`sa${i}_a`]=a.value;save();}; b.oninput=()=>{S.v[`sa${i}_b`]=b.value;save();};
+      zc.append("Z. ",a," – ",b); }
+    else zc=$("td",{}, $("b",{},Z(i)));
+    const inh=$("textarea",{style:"min-height:60px;font-size:15px",placeholder:"Stichpunkte …"}); inh.value=S.v[`sa${i}_i`]||""; inh.oninput=()=>{S.v[`sa${i}_i`]=inh.value;save();};
+    let fc;
+    if(lv==="basis"){ fc=$("select",{style:"font-size:14.5px"}); fc.append($("option",{value:""},"– Funktion wählen –"));
+      FUNK_ORDER.forEach(k=>fc.append($("option",{value:String(k)},FUNK[k]))); fc.value=(S.v[`sa${i}_f`]!=null)?S.v[`sa${i}_f`]:""; fc.onchange=()=>{S.v[`sa${i}_f`]=fc.value;save();tr.style.background="";}; }
+    else { fc=$("textarea",{style:"min-height:60px;font-size:15px",placeholder:"z. B. These aufstellen, Argument mit Fakten belegen …"}); fc.value=S.v[`sa${i}_f`]||""; fc.oninput=()=>{S.v[`sa${i}_f`]=fc.value;save();}; }
+    tr.append(zc,$("td",{},inh),$("td",{},fc)); tbl.append(tr); });
+  box.append($("div",{style:"overflow-x:auto"},tbl));
+  const res=$("div");
+  if(lv!=="standard") box.append($("div",{class:"row"},$("button",{class:"btn small",onclick:()=>{
+    let ok=0;
+    SA.forEach((s,i)=>{ let r;
+      if(lv==="basis") r = String(S.v[`sa${i}_f`])===String(s.f);
+      else r = Math.abs((+S.v[`sa${i}_a`]||0)-RANGES[i][0])<=1 && Math.abs((+S.v[`sa${i}_b`]||0)-RANGES[i][1])<=1;
+      rows[i].style.background = r ? "var(--ok-soft)" : "var(--bad-soft)"; if(r) ok++; });
+    res.className="result "+(ok===SA.length?"ok":"warn");
+    res.innerHTML = ok===SA.length ? "<b>Alles richtig!</b> Super gegliedert." :
+      `<b>${ok} von ${SA.length}</b> ${lv==="basis"?"Funktionen":"Abschnittsgrenzen"} stimmen (grün). Prüfe die roten Zeilen noch einmal im Text.`+(lv==="experte"?" (Abweichungen von einer Zeile gelten als richtig.)":"");
+  }},"Prüfen")));
+  box.append(res); return box;
+}
+
+/* ---- Stoffsammlung ---- */
+const CARDS = [
+ {t:"Smartphones gehören zur Lebenswelt fast aller Jugendlichen (JIM-Studie).", s:"p", src:"Text"},
+ {t:"Benachrichtigungen lenken ab und stören die Konzentration.", s:"k", src:"Text"},
+ {t:"Mit Recherche und Lern-Apps wird der Unterricht abwechslungsreicher.", s:"p", src:"Text"},
+ {t:"In den Pausen wird weniger miteinander geredet und sich bewegt.", s:"k", src:"eigenes Argument"},
+ {t:"Medienkompetenz (z. B. Falschmeldungen erkennen) lernt man nur durch Übung.", s:"p", src:"Text"},
+ {t:"Cybermobbing und heimliche Fotos im Unterricht werden erleichtert.", s:"k", src:"Text"},
+ {t:"Ein Verbot verschiebt Probleme nur in die Freizeit, wo niemand hilft.", s:"p", src:"Text"},
+ {t:"Lehrkräfte können kaum kontrollieren, wofür das Handy gerade genutzt wird.", s:"k", src:"eigenes Argument"},
+ {t:"Im Notfall können Eltern ihre Kinder schnell erreichen.", s:"p", src:"eigenes Argument"},
+ {t:"Wer kein teures Gerät besitzt, kann sich ausgeschlossen fühlen.", s:"k", src:"eigenes Argument"}];
+function renderSort(S, save){
+  const $=window.$el; const st=S.v.sort||(S.v.sort={}); const box=$("div",{class:"card task"});
+  box.append($("h3",{},"Sortiere die Argumente"), $("p",{html:"Spricht das Argument <b>für Bergers Position</b> (kein generelles Verbot) oder <b>dagegen</b> (für ein Verbot)?"}));
+  const list=$("div",{class:"sorter"}); const items=[];
+  CARDS.forEach((c,i)=>{ const row=$("div",{class:"scard"}); const tag=$("small",{style:"display:block;color:var(--muted)"});
+    const bp=$("button",{class:"pro"+(st[i]==="p"?" on":"")},"für Berger"), bk=$("button",{class:"kontra"+(st[i]==="k"?" on":"")},"dagegen");
+    const set=v=>{st[i]=v;save();bp.classList.toggle("on",v==="p");bk.classList.toggle("on",v==="k");row.classList.remove("right","wrong");tag.textContent="";};
+    bp.onclick=()=>set("p"); bk.onclick=()=>set("k");
+    row.append($("div",{},c.t,tag),$("div",{class:"opts"},bp,bk)); list.append(row); items.push([row,tag]); });
+  box.append(list); const res=$("div");
+  box.append($("div",{class:"row"},$("button",{class:"btn small",onclick:()=>{ let ok=0,miss=0;
+    CARDS.forEach((c,i)=>{ const [row,tag]=items[i]; if(!st[i]){miss++;return;} const r=st[i]===c.s; if(r)ok++;
+      row.classList.toggle("right",r); row.classList.toggle("wrong",!r); tag.textContent=(r?"✓ ":"✗ ")+"Herkunft: "+c.src; });
+    res.className="result "+(ok===CARDS.length?"ok":"warn");
+    res.innerHTML = miss ? `Ordne zuerst alle Karten zu (noch ${miss} offen).` : (ok===CARDS.length?"<b>Alles richtig!</b> Achte auf die Herkunft: Argumente aus dem Text kannst du in der Erörterung aufgreifen, eigene Argumente zeigen, dass du selbst weiterdenkst.":`<b>${ok} von ${CARDS.length}</b> richtig. Überlege bei den roten Karten noch einmal.`);
+  }},"Prüfen")),res);
+  return box;
+}
+
+/* ---- Schreibplan (Sanduhr) ---- */
+function sideCards(s){ return CARDS.map((c,i)=>({c,i})).filter(x=>x.c.s===s); }
+function argText(S,key){ const v=S.v.plan&&S.v.plan[key]; if(v==null||v==="") return null; if(v==="own") return (S.v.plan[key+"_own"]||"").trim()||"(eigenes Argument – noch nicht formuliert)"; return CARDS[+v].t; }
+function renderPlan(S, save, rerender){
+  const $=window.$el; const pl=S.v.plan||(S.v.plan={}); const box=$("div",{class:"card task"});
+  box.append($("h3",{},"Lege deinen Schreibplan an"), $("p",{html:"Wähle für jeden Block <b>zwei Argumente</b>: zuerst das schwächere, dann das stärkere. So steigert sich deine Argumentation."}));
+  if(S.level==="basis") box.append($("div",{class:"row"},$("button",{class:"btn ghost small",onclick:()=>{Object.assign(pl,{p1:"2",p2:"4",k1:"3",k2:"1",pos:"bed"});save();rerender();}},"Vorschlag übernehmen (du kannst ihn danach ändern)")));
+  const hg=$("div",{class:"hourglass"});
+  const mk=(title,keys,side)=>{ const b=$("div",{class:"hg-block"}); b.append($("h4",{html:title}));
+    keys.forEach(([k,lab])=>{ const sel=$("select"); sel.append($("option",{value:""},"– Argument wählen –"));
+      sideCards(side).forEach(x=>sel.append($("option",{value:String(x.i)},x.c.t)));
+      if(S.level!=="basis") sel.append($("option",{value:"own"},"eigenes Argument …"));
+      sel.value=pl[k]||""; const own=$("input",{type:"text",placeholder:"Formuliere dein eigenes Argument",style:"margin-top:4px;display:"+(pl[k]==="own"?"block":"none")});
+      own.value=pl[k+"_own"]||""; own.oninput=()=>{pl[k+"_own"]=own.value;save();};
+      sel.onchange=()=>{pl[k]=sel.value;save();own.style.display=sel.value==="own"?"block":"none";};
+      b.append($("div",{class:"sel"},$("span",{},lab),$("div",{},sel,own))); });
+    return b; };
+  hg.append($("div",{class:"hg-block",html:"<h4>2.2 Überleitung zur Erörterung</h4><span style='font-size:14.5px'>„Doch überzeugt diese Position? Im Folgenden soll erörtert werden, ob …“</span>"}));
+  hg.append(mk("2.2.1 These: <i>Für Bergers Position spricht, dass ein generelles Handyverbot der falsche Weg ist.</i>",[["p1","Argument 1 (schwächer)"],["p2","Argument 2 (stärker)"]],"p"));
+  hg.append(mk("2.2.2 Gegenthese: <i>Dennoch spricht einiges dafür, dass ein Handyverbot sinnvoll sein kann.</i>",[["k1","Gegenargument 1 (schwächer)"],["k2","Gegenargument 2 (stärker)"]],"k"));
+  const pos=$("select"); [["","– Ergebnis wählen –"],["zu","Zustimmung: Ein generelles Verbot ist der falsche Weg."],["ab","Ablehnung: Ein Verbot ist richtig."],["bed","bedingte Zustimmung: kein generelles Verbot, aber klare Regeln."]].forEach(([v,t])=>pos.append($("option",{value:v},t)));
+  pos.value=pl.pos||""; pos.onchange=()=>{pl.pos=pos.value;save();};
+  const sb=$("div",{class:"hg-block"}); sb.append($("h4",{},"2.2.3 Synthese – zu welchem Ergebnis kommst du?"),pos); hg.append(sb);
+  box.append(hg); return box;
+}
+function planInfo(keys, title){ return {type:"custom", render:(S)=>{ const $=window.$el; const b=$("div",{class:"lvbox standard"});
+  b.append($("div",{class:"tag"},"Dein Schreibplan"), $("p",{style:"margin:4px 0 6px"},title));
+  const ul=$("ol"); keys.forEach(k=>ul.append($("li",{},argText(S,k)||"– noch nicht gewählt (Schritt „Schreibplan“) –"))); b.append(ul); return b; }}; }
+
+const ARG_FIELDS = [
+  {label:"Behauptung", hint:"Mit Textbezug: „Jana Berger betont, dass …“ oder „Für ihre Position spricht außerdem, dass …“", ph:"Jana Berger betont, dass …"},
+  {label:"Begründung", hint:"„denn …“, „Das liegt daran, dass …“", ph:"Das liegt daran, dass …"},
+  {label:"Beispiel / Beleg", hint:"Konkretes Beispiel aus dem Schulalltag oder Beleg aus dem Text mit (vgl. Z. …).", ph:"Zum Beispiel …"},
+  {label:"Rückführung zur These", hint:"„Deshalb ist ein generelles Handyverbot …“", ph:"Deshalb …"}];
+const GEG_FIELDS = [
+  {label:"Behauptung", hint:"„Zu bedenken ist allerdings, dass …“", ph:"Zu bedenken ist allerdings, dass …"},
+  {label:"Begründung", hint:"„Das liegt daran, dass …“", ph:"Das liegt daran, dass …"},
+  {label:"Beispiel / Beleg / Textkritik", hint:"Beispiel oder Kritik am Text: „Die Autorin räumt dieses Problem zwar ein (vgl. Z. …), blendet aber aus, dass …“", ph:"Zum Beispiel …"},
+  {label:"Rückführung zur Gegenthese", hint:"„Deshalb spricht einiges dafür, …“", ph:"Deshalb …"}];
+
+const L = {einl:H.einl, ueber:H.ueber, sa:H.sa, intent:H.intent,
+  these:[H.ueberE,H.these,H.arg1,H.arg2].join("\n\n"), gegen:[H.gegenthese,H.geg1,H.geg2].join("\n\n"), syn:H.syn};
+const ANNOT = (()=>{ const t=H.sa[2]; const p1="Im dritten Sinnabschnitt (Z. 13–20)", p2=" führt sie ihr erstes Argument an und belegt es mit Fakten:", p4=" (vgl. Z. 14–18)";
+  const mid=t.slice(p1.length+p2.length, t.indexOf(p4)), end=t.slice(t.indexOf(p4)+p4.length);
+  const c=(x,bg)=>`<span style="background:${bg};border-radius:4px;padding:1px 3px">${x}</span>`;
+  return `<p>So ist jeder Absatz im Musteraufsatz aufgebaut – hier am Beispiel des dritten Sinnabschnitts:</p><div class="muster-text">${c(p1,"#d6efef")}${c(p2,"#ffe0d6")}${c(mid,"#eaf2d3")}${c(p4,"#e6def7")}${end}</div>
+  <div class="chips"><span class="chip static" style="background:#d6efef">1 Sinnabschnitt + Zeilen</span><span class="chip static" style="background:#ffe0d6">2 Funktion (Verb)</span><span class="chip static" style="background:#eaf2d3">3 Inhalt in indirekter Rede</span><span class="chip static" style="background:#e6def7">4 Zeilenangabe</span></div>`; })();
+const FULL = [["1. Einleitung",[H.einl]],["2.1.1 Überleitung zum Text",[H.ueber]],["2.1.2 Strukturierte Inhaltsangabe",H.sa],["2.1.3 Intention",[H.intent]],["2.2.1 Argumentationsblock der Autorenmeinung",[H.ueberE,H.these,H.arg1,H.arg2]],["2.2.2 Argumentationsblock der Gegenmeinung",[H.gegenthese,H.geg1,H.geg2]],["2.2.3 Synthese",[H.syn]]]
+  .map(([t,ps])=>`<h4 style="margin:14px 0 4px;color:var(--accent)">${t}</h4>`+ps.map(x=>`<div class="muster-text">${x}</div>`).join("")).join("");
+
+window.PAGE = {
+  theme:{id:"phone", kicker:"Übungstext · Textbezogene Erörterung", stepWord:"SCHRITT",
+  progress:p=>"Akku "+p+" %"+(p>=100?"  ·  voll geladen!":""),
+  finish:'<div class="big">🔋</div><div><b>Akku voll geladen!</b>Dein Aufsatz ist komplett. Überarbeite ihn mit der Checkliste und speichere ihn.</div>',
+  icon:'<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="17" y="3" width="30" height="58" rx="7" fill="#fff"/><rect x="21" y="11" width="22" height="40" rx="2" fill="#0e8a8c"/><rect x="27" y="6" width="10" height="2.5" rx="1.2" fill="#0e8a8c"/><circle cx="32" cy="55.5" r="2.4" fill="#0e8a8c"/><rect x="24" y="16" width="13" height="6" rx="3" fill="#fff"/><rect x="27" y="26" width="13" height="6" rx="3" fill="#ff7a59"/><rect x="24" y="36" width="10" height="6" rx="3" fill="#fff"/></svg>',
+  hero:'<svg viewBox="0 0 220 200" aria-hidden="true"><rect x="62" y="8" width="96" height="184" rx="18" fill="#10233d"/><rect x="69" y="24" width="82" height="152" rx="6" fill="#f4fbfb"/><rect x="96" y="14" width="28" height="5" rx="2.5" fill="#2d4466"/><g font-family="system-ui,sans-serif" font-size="10.5" font-weight="700"><rect x="75" y="36" width="58" height="24" rx="10" fill="#dff1f1"/><text x="83" y="52" fill="#0e6f78">Handy aus?</text><rect x="91" y="68" width="54" height="24" rx="10" fill="#ff7a59"/><text x="100" y="84" fill="#fff">Kopf an!</text><rect x="73" y="100" width="76" height="24" rx="10" fill="#dff1f1"/><text x="79" y="116" fill="#0e6f78">Pro oder Kontra?</text><rect x="99" y="132" width="46" height="24" rx="10" fill="#0e8a8c"/><text x="106" y="148" fill="#fff">These!</text></g><rect x="160" y="40" width="44" height="22" rx="4" fill="none" stroke="#fff" stroke-width="3"/><rect x="204" y="47" width="5" height="8" rx="1.5" fill="#fff"/><rect x="164" y="44" width="28" height="14" rx="2" fill="#7ee0a1"/><g fill="#fff" opacity=".8"><circle cx="30" cy="60" r="4"/><circle cx="20" cy="130" r="3"/><circle cx="196" cy="150" r="5"/></g></svg>'},
+  key:"ewh-handy-ueben-v1",
+  title:"Textbezogen erörtern üben: Handyverbot an Schulen",
+  short:"Textbezogen erörtern üben",
+  sub:"Neuer Text · Handyverbot an Schulen",
+  fileName:"Uebungsaufsatz_Handyverbot",
+  source:SRC,
+  intro:"Du übst die Schulaufgabe an einem neuen Text: einem Kommentar zur Frage, ob Smartphones an Schulen verboten werden sollten. Schritt für Schritt erschließt du den Text, planst deinen Aufsatz und schreibst ihn – genau nach unserer Gliederung.",
+  startExtra:`<h3>So funktioniert's</h3><ul><li>Den Text (M1) öffnest du jederzeit mit dem Knopf <b>„Text M1 anzeigen“</b> oben rechts – mit Zeilennummern.</li><li>In jedem Schritt gibt es Aufgaben, Hilfen und eine <b>Lösung zum Vergleichen</b>. Schau erst nach, wenn du es selbst versucht hast!</li><li>Alles, was du schreibst, wird am Ende zu deinem Aufsatz zusammengesetzt.</li></ul>`,
+  levels:[
+    {id:"basis", name:"Basis", desc:"Viele Hilfen: Funktionen zum Auswählen, Satzanfänge, Argument-Baukasten und ein Vorschlag für den Schreibplan."},
+    {id:"standard", name:"Standard", desc:"Zeilen der Sinnabschnitte sind vorgegeben; Formulierungshilfen und Argument-Baukasten zum Aufklappen."},
+    {id:"experte", name:"Experte", desc:"Du gliederst den Text selbst, findest eigene Argumente und bekommst Profi-Aufträge."}],
+  finalHeader: S => "Textbezogene Erörterung"+" – Jana Berger: „Kopf an – gerade beim Handy!“",
+  steps:[
+  /* 1 */ {group:"Vorbereitung", nav:"Aufgabe verstehen", title:"Die Aufgabe verstehen",
+    blocks:[
+      {type:"info", task:true, title:"Lies die Aufgabenstellung genau", html:`<ol><li><b>Analysiere</b> Jana Bergers Kommentar „Kopf an – gerade beim Handy! Warum ein Handyverbot an Schulen der falsche Weg ist“. Gib Inhalt und Aufbau wieder und stelle die Intention der Autorin dar.</li><li><b>Erörtere</b> anschließend die Position der Autorin, ein generelles Handyverbot an Schulen sei der falsche Weg.</li></ol>`},
+      {type:"info", title:"Unsere Gliederung", html:`<table class="t">
+        <tr><td><b>1. Einleitung</b></td><td>Interesse wecken, zum Thema hinführen, Themenfrage</td></tr>
+        <tr><td><b>2.1 Textanalyse</b> (ca. 30–40 %)</td><td>2.1.1 Überleitung zum Text · 2.1.2 Strukturierte Inhaltsangabe · 2.1.3 Intention <br><i>keine Sprachanalyse</i></td></tr>
+        <tr><td><b>2.2 Erörterung</b> (ca. 60–70 %)</td><td>2.2.1 These + 1–2 Argumente · 2.2.2 Gegenthese + 1–2 Argumente · 2.2.3 Synthese</td></tr></table>`},
+      {type:"help", kind:"tipp", title:"Tipp: Zeit einteilen in der Schulaufgabe", html:"<ul><li>ca. 15 % der Zeit: Text zweimal lesen und markieren</li><li>ca. 15 %: Sinnabschnitte und Schreibplan (Sanduhr) notieren</li><li>ca. 60 %: schreiben</li><li>ca. 10 %: überarbeiten (Präsens? Konjunktiv? Zeilenangaben? keine Ich-Form?)</li></ul>", openFor:["basis","standard"]}]},
+
+  /* 2 */ {group:"Vorbereitung", nav:"Text lesen & erschließen", title:"Den Text lesen und erschließen",
+    lead:"Öffne den Text mit dem Knopf <b>„Text M1 anzeigen“</b> oben rechts. Lies ihn zweimal: einmal zum Verstehen, einmal genau.",
+    blocks:[
+      {type:"help", kind:"tipp", title:"Tipp: Wo steht die These?", html:"<p>In Kommentaren steht die These meist am Anfang, oft direkt nach dem Einstieg. Achte auf Signalwörter wie „Doch“, „So verständlich … ist –“ oder „der falsche Weg“.</p>", openFor:["basis"], levels:["basis","standard"]},
+      {type:"mc", id:"mc_these", q:"Welche These vertritt Jana Berger?", options:[
+        "Smartphones lenken im Unterricht ab und sollten deshalb verboten werden.",
+        "Ein generelles Handyverbot ist falsch; die Schule soll den verantwortungsvollen Umgang mit Smartphones vermitteln.",
+        "Schulen sollten allen Schülerinnen und Schülern ein Smartphone zur Verfügung stellen.",
+        "Handys sollten nur in den Pausen erlaubt sein."], correct:1,
+        why:"Die These steht im zweiten Absatz: Ein generelles Handyverbot sei „der falsche Weg“ (Z. 8 f.).",
+        whyWrong:"Lies noch einmal die Zeilen 8–12."},
+      {type:"write", id:"notiz", label:"Steckbrief des Textes", rows:7, check:false, hint:"Diese Notizen helfen dir bei der Überleitung zum Text. Sie erscheinen nicht im fertigen Aufsatz.",
+        starters:{basis:"Autorin: \nTitel: \nTextsorte: \nJahr: \nThema: \nThese (in eigenen Worten): ", standard:"Autorin: \nTitel: \nTextsorte: \nJahr: \nThema: \nThese (in eigenen Worten): "}},
+      {type:"help", kind:"loesung", title:"Lösung: Steckbrief", html:"<p>Autorin: Jana Berger · Titel: „Kopf an – gerade beim Handy! Warum ein Handyverbot an Schulen der falsche Weg ist“ · Textsorte: Kommentar · Jahr: 2026 · Thema: Handyverbot an Schulen · These: Ein generelles Handyverbot sei der falsche Weg; Schule müsse den verantwortungsvollen Umgang mit Smartphones vermitteln.</p>"},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag", html:"<p>Bestimme die <b>Argumenttypen</b> in Z. 13–20, Z. 21–28 und Z. 36–41 (Fakten-, Autoritäts-, Wertargument, analogisierendes Argument). Lösung: siehe unten.</p>", levels:["experte"]},
+      {type:"help", kind:"loesung", title:"Lösung: Argumenttypen", html:"<ul><li>Z. 13–20: <b>Faktenargument</b> (JIM-Studie)</li><li>Z. 21–28: Beispiele + <b>analogisierendes Argument</b> (Taschenrechner)</li><li>Z. 36–41: <b>Autoritätsargument</b> (Medienpädagogen) + <b>analogisierendes Argument</b> (Fahrradfahren)</li></ul>", levels:["experte"]}]},
+
+  /* 3 */ {group:"Vorbereitung", nav:"Sinnabschnitte gliedern", title:"Sinnabschnitte und ihre Funktion",
+    lead:"Ein Sinnabschnitt ist ein Textteil, in dem die Autorin einen Gedankenschritt macht. Für die Strukturierte Inhaltsangabe brauchst du <b>Zeilen, Inhalt und Funktion</b>.",
+    blocks:[
+      {type:"help", kind:"formul", title:"Mögliche Funktionen von Abschnitten", html:"<div class='chips'>"+["Thema einführen","Problem darstellen","Hintergrundinformationen liefern","zentrale These aufstellen","Argument anführen","Argument durch Beispiele veranschaulichen","Behauptung durch Fakten, Studien oder Zitate belegen","Gegenargument aufgreifen","Gegenargument entkräften","Lösungsvorschlag formulieren","Fazit ziehen / Ausblick geben"].map(x=>`<span class="chip static">${x}</span>`).join("")+"</div>", openFor:["standard"], levels:["standard","experte"]},
+      {type:"custom", render:renderSA},
+      {type:"help", kind:"loesung", title:"Lösung: Sinnabschnitte", html:SA_TABLE}]},
+
+  /* 4 */ {group:"Vorbereitung", nav:"Intention erkennen", title:"Die Intention erkennen",
+    blocks:[
+      {type:"mc", id:"mc_int", q:"Was will Jana Berger mit ihrem Kommentar vor allem erreichen?", options:[
+        "Sie will sachlich über die Ergebnisse der JIM-Studie informieren.",
+        "Sie will die Leser unterhalten und zum Lachen bringen.",
+        "Sie will überzeugen: Statt Handys zu verbieten, soll die Schule den Umgang mit ihnen durch Regeln üben.",
+        "Sie will erreichen, dass Handys auch in den Pausen verboten werden."], correct:2,
+        why:"Berger nimmt Stellung und appelliert (vgl. Z. 42–52): Regeln statt Verbot. Die JIM-Studie ist nur ein Beleg.",
+        whyWrong:"Achte auf den Lösungsvorschlag und den Schluss des Textes (Z. 42–52)."},
+      {type:"info", html:"<p>Die Intention <b>formulierst</b> du später im Schritt <b>2.1.3</b> – direkt nach der Strukturierten Inhaltsangabe, so wie in unserer Gliederung.</p>"}]},
+
+  /* 5 */ {group:"Schreiben: 1. Einleitung & 2.1 Textanalyse", nav:"1. Einleitung", title:"1. Einleitung schreiben",
+    lead:"Wecke Interesse, führe zum Thema hin und ende mit der Themenfrage.",
+    blocks:[
+      {type:"check", id:"c_einl", title:"Checkliste Einleitung", items:["Ich wecke Interesse (Alltagsszene, Bedeutung, aktuelles Ereignis oder Begriff).","Ich führe zum Thema Handys an Schulen hin.","Ich ende mit der Themenfrage: <i>Sollten Smartphones an Schulen generell verboten werden?</i>","Ich nenne noch keine eigene Position und keine Argumente."]},
+      {type:"help", kind:"tipp", title:"Möglichkeiten, Interesse zu wecken", html:"<ul><li>eine Alltagsszene (z. B. Handy vibriert im Unterricht)</li><li>die Bedeutung des Themas (fast alle Jugendlichen haben ein Smartphone)</li><li>ein aktuelles Ereignis (Schulen führen Handyverbote ein)</li><li>eine Begriffserklärung</li></ul>", openFor:["basis","standard"]},
+      {type:"help", kind:"formul", title:"Bausteine für deine Einleitung", html:chips(["Für die meisten Jugendlichen gehört das Smartphone ganz selbstverständlich zum Alltag.","Gleichzeitig wächst die Sorge, dass","Einige Schulen haben deshalb bereits","Daher stellt sich die Frage: Sollten Smartphones an Schulen generell verboten werden?"]), chipsFor:"einl", openFor:["basis"], levels:["basis","standard"]},
+      {type:"write", id:"einl", task:true, label:"Meine Einleitung", rows:6, noQuoteCheck:true,
+        starters:{basis:"[Einstieg: Alltagsszene oder Bedeutung des Themas] …\nGleichzeitig wächst die Sorge, dass …\nDaher stellt sich die Frage: Sollten Smartphones an Schulen generell verboten werden?"}},
+      {type:"help", kind:"loesung", title:"Musteraufsatz: Einleitung", html:sol(L.einl)}]},
+
+  /* 6 */ {group:"Schreiben: 1. Einleitung & 2.1 Textanalyse", nav:"2.1.1 Überleitung zum Text", title:"2.1.1 Überleitung zum Text",
+    blocks:[
+      {type:"check", id:"c_ueber", title:"Das gehört hinein", items:["Autorin und Titel","Textsorte und Jahr","These in eigenen Worten (Konjunktiv I)","Ankündigung: erst Textanalyse, dann Erörterung"]},
+      {type:"help", kind:"formul", title:"Formulierungshilfen", html:chips(["Mit dieser Frage beschäftigt sich Jana Berger in ihrem Kommentar","„Kopf an – gerade beim Handy! Warum ein Handyverbot an Schulen der falsche Weg ist“","aus dem Jahr 2026.","Die Autorin vertritt die These, dass","Im Folgenden werden zunächst Inhalt und Aufbau des Kommentars untersucht, anschließend wird ihre Position erörtert."]), chipsFor:"ueber", openFor:["basis"], levels:["basis","standard"]},
+      {type:"write", id:"ueber", task:true, label:"Meine Überleitung zum Text", rows:5, indirect:true,
+        starters:{basis:"Mit dieser Frage beschäftigt sich … in ihrem Kommentar „…“ aus dem Jahr … Die Autorin vertritt die These, dass … Im Folgenden werden zunächst …, anschließend …"}},
+      {type:"help", kind:"loesung", title:"Musteraufsatz: Überleitung zum Text", html:sol(L.ueber)}]},
+
+  /* 7 */ {group:"Schreiben: 1. Einleitung & 2.1 Textanalyse", nav:"2.1.2 Strukturierte Inhaltsangabe", title:"2.1.2 Strukturierte Inhaltsangabe schreiben",
+    lead:"Formuliere aus deiner Gliederung (Schritt 3) einen zusammenhängenden Text. <b>Jeder Absatz beginnt mit dem Sinnabschnitt und den Zeilen</b> und nennt die Funktion.",
+    blocks:[
+      {type:"check", id:"c_inhalt", title:"Checkliste", items:["Jeder Absatz: „Im … Sinnabschnitt (Z. …) …“","Funktion benannt (steigt ein, stellt These auf, belegt, greift auf, entkräftet …)","Inhalt knapp in eigenen Worten","indirekte Rede (Konjunktiv I)","Zitate mit (Z. …), sinngemäß mit (vgl. Z. …)","Präsens, keine eigene Wertung"]},
+      {type:"help", kind:"loesung", title:"Deine Grundlage: Lösung der Sinnabschnitte", html:SA_TABLE, openFor:["basis"]},
+      {type:"help", kind:"muster", title:"So ist ein Absatz der Strukturierten Inhaltsangabe aufgebaut", html:ANNOT, openFor:["basis","standard"]},
+      {type:"help", kind:"formul", title:"Formulierungshilfen für die Strukturierte Inhaltsangabe", html:chips(["Die Autorin steigt in das Thema ein, indem","Dadurch unterstreicht Berger,","Sie verweist auf","informiert zunächst über","An dieser Stelle wird ein hilfreicher Einblick in … gegeben.","In einem weiteren Abschnitt greift die Verfasserin … auf","Sie gibt zu bedenken,","und führt … an","Indem sie zitiert,","und leitet damit weiter zu","Deswegen ist sich die Verfasserin sicher, dass","Bevor die Autorin mit einem Ausblick auf … schließt, geht sie auf … ein.","Abschließend verweist sie auf","Dadurch bekräftigt sie die Idee,"]), chipsFor:"inhalt", openFor:["basis","standard"]},
+      {type:"help", kind:"tipp", title:"Hilfe: indirekte Rede (Konjunktiv I)", html:KONJ, openFor:["basis"]},
+      {type:"write", id:"inhalt", task:true, label:"Meine Strukturierte Inhaltsangabe", rows:16, indirect:true,
+        starters:{
+          basis: ORD.map((o,i)=>`Im ${o} Sinnabschnitt (${Z(i)}) `+["steigt die Autorin in das Thema ein, indem …","stellt Berger ihre zentrale These auf: …","führt sie ihr erstes Argument an und belegt es mit Fakten: …","ergänzt die Verfasserin ein zweites Argument: … Sie veranschaulicht dies durch …","greift Berger die Einwände der Kritiker auf und räumt ein, dass … Sie entkräftet diese jedoch, indem …","bekräftigt sie ihre Position, indem sie auf … verweist.","formuliert die Autorin einen Lösungsvorschlag: …","zieht sie ein Fazit: … Abschließend appelliert sie …"][i]).join("\n\n"),
+          standard: ORD.map((o,i)=>`Im ${o} Sinnabschnitt (${Z(i)}) …`).join("\n\n")}},
+      {type:"help", kind:"loesung", title:"Musteraufsatz: Strukturierte Inhaltsangabe", html:sol(...L.sa)}]},
+
+  /* 7b */ {group:"Schreiben: 1. Einleitung & 2.1 Textanalyse", nav:"2.1.3 Intention", title:"2.1.3 Intention formulieren",
+    lead:"Fasse am Ende der Textanalyse zusammen, was die Autorin mit ihrem Kommentar erreichen will.",
+    blocks:[
+      {type:"check", id:"c_int", title:"Checkliste Intention", items:["Ich nenne die Textsorte (meinungsbildender Kommentar).","Ich formuliere, wofür die Autorin plädiert.","Ich nenne, woran oder an wen sie appelliert.","Ich bewerte die Position noch nicht."]},
+      {type:"write", id:"intent", task:true, label:"Meine Intention", rows:4,
+        starters:{basis:"In ihrem meinungsbildenden Kommentar plädiert Jana Berger dafür, … Sie appelliert an …", standard:"In ihrem meinungsbildenden Kommentar plädiert Jana Berger dafür, …"}},
+      {type:"help", kind:"loesung", title:"Musteraufsatz: Intention", html:sol(L.intent)}]},
+
+  /* 8 */ {group:"Erörterung planen & schreiben", nav:"Stoffsammlung", title:"Stoffsammlung: Argumente sortieren",
+    lead:"Bevor du schreibst, sammelst du Argumente für und gegen die Position der Autorin.",
+    blocks:[
+      {type:"custom", render:renderSort},
+      {type:"write", id:"eigene", label:"Finde ein weiteres, eigenes Argument (für oder gegen Berger)", rows:3, check:false, levels:["standard","experte"], hint:"Notiere es mit Begründung in Stichpunkten. Im Schreibplan kannst du es unter „eigenes Argument …“ auswählen."}]},
+
+  /* 9 */ {group:"Erörterung planen & schreiben", nav:"Schreibplan (Sanduhr)", title:"Schreibplan nach dem Sanduhr-Prinzip",
+    blocks:[ {type:"custom", render:renderPlan},
+      {type:"help", kind:"tipp", title:"Warum das stärkste Argument zuletzt?", html:"<p>Was zuletzt kommt, bleibt am besten im Gedächtnis. Deshalb steigerst du innerhalb jedes Blocks: erst das schwächere, dann das stärkere Argument.</p>"}]},
+
+  /* 10 */ {group:"Erörterung planen & schreiben", nav:"2.2.1 These-Block", title:"2.2.1 Argumentationsblock der Autorenmeinung",
+    lead:"Überleitung, <b>These</b> und deine <b>zwei</b> Argumente – jeweils vollständig ausgeführt.",
+    blocks:[
+      {type:"check", id:"c_these", title:"Checkliste Autorenmeinung", items:["Überleitung zur Erörterung (z. B. „Doch überzeugt diese Position?“)","klare <b>These</b>","<b>ein bis zwei</b> Argumente, das stärkere zuletzt","jedes Argument: <b>Behauptung, Begründung, Beispiel/Beleg, Rückführung</b>","Bezug auf Bergers Argumente (mit Zeilenangabe)","eigene Ergänzung, wo ein Argument der Autorin unvollständig ist","objektiv formuliert, ohne Ich-Form"]},
+      planInfo(["p1","p2"],"These: Für Bergers Position spricht, dass ein generelles Handyverbot der falsche Weg ist."),
+      {type:"help", kind:"formul", title:"Formulierungshilfen", html:chips(["Doch überzeugt diese Position? Im Folgenden soll erörtert werden, ob Smartphones an Schulen tatsächlich nicht generell verboten werden sollten.","Für Bergers Position spricht, dass ein generelles Handyverbot an Schulen der falsche Weg ist.","Jana Berger betont, dass","Hinzu kommt, dass","Ein weiterer, sogar noch wichtigerer Aspekt besteht darin, dass","Zum Beispiel","(vgl. Z. …)","Deshalb ist ein generelles Handyverbot"]), chipsFor:"these", openFor:["basis","standard"], levels:["basis","standard"]},
+      {type:"builder", id:"b_these", target:"these", title:"Argument-Baukasten", intro:"Fülle die vier Bausteine für Argument 1 aus und setze sie zusammen. Danach überschreibst du die Felder für Argument 2.", fields:ARG_FIELDS, levels:["basis","standard"]},
+      {type:"write", id:"these", task:true, label:"Mein Block zur Autorenmeinung", rows:14,
+        starters:{basis:"Doch überzeugt diese Position? Im Folgenden soll erörtert werden, ob Smartphones an Schulen tatsächlich nicht generell verboten werden sollten.\n\nFür Bergers Position spricht, dass ein generelles Handyverbot an Schulen der falsche Weg ist.\n\n"}},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag", html:"<p>Verwende in einem Argument ein <b>eigenes</b> Beispiel aus deinem Schulalltag, das über den Text hinausgeht – und zeige, an welcher Stelle Bergers Argumentation dadurch ergänzt wird.</p>", levels:["experte"]},
+      {type:"help", kind:"loesung", title:"Musteraufsatz: Überleitung, These und zwei Argumente", html:sol(...L.these.split("\n\n"))}]},
+
+  /* 11 */ {group:"Erörterung planen & schreiben", nav:"2.2.2 Gegenthese-Block", title:"2.2.2 Argumentationsblock der Gegenmeinung",
+    lead:"Überleitung, <b>Gegenthese</b> und zwei Gegenargumente. Baue mindestens einmal <b>Kritik am Text</b> ein.",
+    blocks:[
+      {type:"check", id:"c_gegen", title:"Checkliste Gegenmeinung", items:["Überleitung zur Gegenposition („Zweifelsohne … Dennoch …“)","klare <b>Gegenthese</b>","<b>ein bis zwei</b> Gegenargumente, das stärkste zuletzt","jedes Argument: <b>Behauptung, Begründung, Beispiel/Beleg, Rückführung</b>","mindestens einmal <b>Kritik an einer Textstelle</b> (mit Zeilenangabe)","objektiv formuliert, ohne Ich-Form"]},
+      planInfo(["k1","k2"],"Gegenthese: Dennoch spricht einiges dafür, dass ein Handyverbot sinnvoll sein kann."),
+      {type:"help", kind:"formul", title:"Formulierungshilfen", html:chips(["Zweifelsohne sprechen also einige Argumente für Bergers Position. Dennoch darf nicht vergessen werden, dass ein Handyverbot an Schulen durchaus sinnvoll sein kann.","Zu bedenken ist allerdings, dass","Das Argument … ist zwar nachvollziehbar, jedoch","Die Aussage …, blendet aus, dass","Wer behauptet, dass …, lässt außer Acht, dass","Die Autorin räumt dieses Problem zwar ein (vgl. Z. …), blendet aber aus, dass","Das schwerwiegendste Argument ist jedoch, dass","Deshalb spricht einiges dafür,"]), chipsFor:"gegen", openFor:["basis","standard"], levels:["basis","standard"]},
+      {type:"builder", id:"b_gegen", target:"gegen", title:"Argument-Baukasten (Gegenargument)", fields:GEG_FIELDS, levels:["basis","standard"]},
+      {type:"write", id:"gegen", task:true, label:"Mein Block zur Gegenmeinung", rows:14,
+        starters:{basis:"Zweifelsohne sprechen also einige Argumente für Bergers Position. Dennoch darf nicht vergessen werden, dass ein Handyverbot an Schulen durchaus sinnvoll sein kann.\n\n"}},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag", html:"<p>Berger schlägt „Handygaragen“ und Regeln vor (Z. 42–48). Prüfe kritisch: Sind diese Regeln im Schulalltag wirklich umsetzbar? Baue deine Einschätzung als Textkritik in ein Gegenargument ein.</p>", levels:["experte"]},
+      {type:"help", kind:"loesung", title:"Musteraufsatz: Gegenthese und zwei Gegenargumente", html:sol(...L.gegen.split("\n\n"))}]},
+
+  /* 12 */ {group:"Erörterung planen & schreiben", nav:"2.2.3 Synthese", title:"2.2.3 Synthese (abwägendes Urteil)",
+    lead:"Wäge ab, beziehe Stellung und nenne Bedingungen – <b>objektiv</b> und <b>ohne neue Argumente</b>.",
+    blocks:[
+      {type:"custom", render:(S)=>{ const $=window.$el; const p=S.v.plan&&S.v.plan.pos; const t={zu:"Zustimmung: Ein generelles Verbot ist der falsche Weg.",ab:"Ablehnung: Ein Verbot ist richtig.",bed:"bedingte Zustimmung: kein generelles Verbot, aber klare Regeln."}[p];
+        return $("div",{class:"lvbox standard",html:`<div class="tag">Dein geplantes Ergebnis</div><p style="margin:4px 0">${t||"– noch nicht gewählt (Schritt „Schreibplan“) –"}</p>`}); }},
+      {type:"check", id:"c_syn", title:"Checkliste Synthese", items:["Ich wäge beide Seiten ab.","Ich beziehe eindeutig Stellung (Ja, Nein oder bedingt).","Ich nenne Bedingungen.","Ich bringe <b>keine neuen Argumente</b>.","Ich schreibe ohne Ich-Form.","Ich runde mit einem Gedanken ab."]},
+      {type:"help", kind:"tipp", title:"Hilfe: objektiv statt Ich-Form", html:OBJ, openFor:["basis","standard"]},
+      {type:"help", kind:"formul", title:"Formulierungshilfen", html:chips(["Wägt man die Argumente gegeneinander ab, so zeigt sich, dass","Die Gefahr … ist zwar ernst zu nehmen, doch","Die Frage, ob Smartphones an Schulen generell verboten werden sollten, lässt sich daher mit","beantworten","– allerdings nur, wenn","Wünschenswert wäre es, dass"]), chipsFor:"syn", openFor:["basis"], levels:["basis","standard"]},
+      {type:"write", id:"syn", task:true, label:"Meine Synthese", rows:7,
+        starters:{basis:"Wägt man die Argumente gegeneinander ab, so zeigt sich, dass … Die Gefahr … ist zwar ernst zu nehmen, doch … Die Frage, ob Smartphones an Schulen generell verboten werden sollten, lässt sich daher mit … beantworten – allerdings nur, wenn … Wünschenswert wäre es, dass …"}},
+      {type:"lvbox", lv:"experte", tag:"Profi-Auftrag", html:"<p>Formuliere eine Bedingung, unter der sich dein Urteil ändern würde („Sollte sich zeigen, dass …, müsste man …“).</p>", levels:["experte"]},
+      {type:"help", kind:"loesung", title:"Musteraufsatz: Synthese", html:sol(L.syn)}]},
+
+  /* 13 */ {group:"Abschluss", nav:"Mein Aufsatz & Überarbeitung", title:"Mein Aufsatz – fertig zum Überarbeiten",
+    lead:"Hier steht dein ganzer Aufsatz. Prüfe ihn mit der Checkliste und dem Sprach-Check und verbessere die einzelnen Schritte, wenn nötig.",
+    blocks:[
+      {type:"check", id:"c_end", title:"Checkliste für die Überarbeitung", items:[
+        "Einleitung endet mit einer klaren Themenfrage.",
+        "Überleitung nennt Autorin, Titel, Textsorte, Jahr und These.",
+        "Alle Sinnabschnitte haben Zeilenangaben und eine Funktion.",
+        "Die Intention ist formuliert.",
+        "These- und Gegenthese-Block haben je 1–2 vollständige Argumente (Behauptung, Begründung, Beispiel, Rückführung).",
+        "Die Synthese wägt ab, bezieht Stellung und bringt keine neuen Argumente.",
+        "Präsens, indirekte Rede, Zitate mit (Z. …), keine Ich-Form."]},
+      {type:"final", parts:[{title:"1. Einleitung", ids:["einl"]},{title:"2.1 Textanalyse", ids:["ueber","inhalt","intent"]},{title:"2.2 Erörterung", ids:["these","gegen","syn"]}]},
+      {type:"help", kind:"loesung", title:"Zum Vergleich: der vollständige Musteraufsatz", html:"<p>Vergleiche erst, wenn dein eigener Aufsatz fertig ist.</p>"+FULL}]}
+  ]};
+</script><script>/* Gemeinsamer Kern: Schritte, Niveaus, Speichern, Sprach-Check, Export */
+(function(){
+const P = window.PAGE;
+const LV = {basis:"Basis", standard:"Standard", experte:"Experte"};
+let S = {level:null, name:"", v:{}, c:{}, step:0, seen:{}};
+try{ const r = localStorage.getItem(P.key); if(r){ S = Object.assign(S, JSON.parse(r)); } }catch(e){}
+function save(){ try{ localStorage.setItem(P.key, JSON.stringify(S)); }catch(e){} }
+window.STATE = S; window.SAVE = save;
+
+const $ = (t, a={}, ...kids) => { const e = document.createElement(t);
+  for(const k in a){ if(k==="class") e.className=a[k]; else if(k==="html") e.innerHTML=a[k];
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2), a[k]); else e.setAttribute(k,a[k]); }
+  kids.flat().forEach(c => { if(c==null) return; e.append(c.nodeType ? c : document.createTextNode(c)); });
+  return e; };
+window.$el = $;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+window.esc = esc;
+const vis = b => !b.levels || (S.level && b.levels.includes(S.level));
+
+/* ---------- Sprach-Check ---------- */
+function stripQuotes(t){ return t.replace(/„[^“]*“/g, m => " ".repeat(m.length)); }
+function langCheck(text, opts={}){
+  const out = []; const t = text || "";
+  if(!t.trim()) return {cls:"warn", html:"Hier steht noch kein Text."};
+  const nq = stripQuotes(t);
+  const ich = [...nq.matchAll(/\b(ich|mich|mir|meine?[nmrs]?|meiner|wir|uns|unsere?[nmrs]?)\b/gi)].map(m=>m[0]);
+  if(ich.length) out.push(`<b>Ich-/Wir-Form gefunden</b> (${[...new Set(ich.map(w=>w.toLowerCase()))].join(", ")}): Schreibe objektiv, z.&nbsp;B. „Wägt man … ab, so zeigt sich …“ oder „Es spricht dafür, dass …“.`);
+  const ugs = [...nq.matchAll(/\b(krass|voll|halt|mega|echt|cool|okay|ok|eh|zocken|kriegen|kriegt|total|irgendwie|Sachen?)\b/gi)].map(m=>m[0]);
+  if(ugs.length) out.push(`<b>Umgangssprache?</b> (${[...new Set(ugs.map(w=>w.toLowerCase()))].join(", ")}): Ersetze durch sachliche Wörter.`);
+  const past = [...nq.matchAll(/\b(war|waren|hatte|hatten|sagte|schrieb|meinte|erklärte|zeigte|wurde|wurden|ging|kam)\b/gi)].map(m=>m[0]);
+  if(past.length) out.push(`<b>Präteritum?</b> (${[...new Set(past.map(w=>w.toLowerCase()))].join(", ")}): Inhaltsangabe und Erörterung stehen im <b>Präsens</b>.`);
+  const quotes = [...t.matchAll(/„[^“]{3,}“(?!\s*\((Z\.|vgl\.))/g)].length;
+  if(quotes && !opts.noQuoteCheck) out.push(`<b>${quotes} Zitat(e) ohne Zeilenangabe:</b> Setze nach jedem Zitat (Z. …) bzw. bei sinngemäßer Wiedergabe (vgl. Z. …).`);
+  const sents = (t.match(/[^.!?]+[.!?]*/g)||[]).filter(s => s.trim().split(/\s+/).length > 35);
+  if(sents.length) out.push(`<b>${sents.length} sehr lange(r) Satz/Sätze</b> (über 35 Wörter): Teile sie auf, damit dein Text verständlich bleibt.`);
+  if(opts.indirect){
+    const ind = (t.match(/\b(sei|seien|habe|hätten|könne|müsse|solle|gebe|gehöre|werde|dürfe)\b/g)||[]).length;
+    if(ind===0) out.push(`<b>Keine indirekte Rede gefunden:</b> Gib die Aussagen der Autorin im Konjunktiv&nbsp;I wieder (sie <i>sei</i>, <i>habe</i>, <i>müsse</i> …).`);
+  }
+  if(!out.length) return {cls:"ok", html:"Super, der Sprach-Check hat nichts gefunden. Prüfe trotzdem selbst noch einmal Rechtschreibung und Zeichensetzung."};
+  return {cls:"warn", html:"<ul><li>"+out.join("</li><li>")+"</li></ul><small>Der Check ist eine Hilfe, kein Urteil – er findet nicht alles und irrt sich manchmal.</small>"};
+}
+window.langCheck = langCheck;
+const words = t => (t||"").trim() ? t.trim().split(/\s+/).length : 0;
+
+/* ---------- Block-Renderer ---------- */
+const R = {};
+R.info = b => $("div",{class:"card"+(b.task?" task":""), html:(b.title?`<h3>${b.title}</h3>`:"")+b.html});
+R.lvbox = b => $("div",{class:"lvbox "+b.lv, html:`<div class="tag">${b.tag||("Für "+LV[b.lv])}</div>`+b.html});
+R.help = b => { const d=$("details",{class:"help "+(b.kind||"tipp")});
+  if(b.open===true || (b.openFor && b.openFor.includes(S.level))) d.open=true;
+  d.append($("summary",{}, b.title), $("div",{class:"body", html:b.html}));
+  if(b.chipsFor){ d.querySelectorAll(".chip").forEach(ch => ch.addEventListener("click", ()=>insertInto(b.chipsFor, ch.dataset.t || ch.textContent))); }
+  return d; };
+R.check = b => { const arr = S.c[b.id] || (S.c[b.id] = b.items.map(()=>false));
+  const box=$("div",{class:"card checklist"}); if(b.title) box.append($("h3",{},b.title)); if(b.intro) box.append($("p",{html:b.intro}));
+  const cnt=$("div",{class:"count"}); const upd=()=>{cnt.textContent=`${arr.filter(Boolean).length} von ${b.items.length} abgehakt`;};
+  b.items.forEach((it,i)=>{ const cb=$("input",{type:"checkbox"}); cb.checked=!!arr[i];
+    cb.addEventListener("change",()=>{arr[i]=cb.checked; save(); upd();});
+    box.append($("label",{},cb,$("span",{html:it}))); });
+  upd(); box.append(cnt); return box; };
+function insertInto(id, txt){ const ta=document.getElementById("ta-"+id); if(!ta) return;
+  const s=(ta.selectionStart!=null)?ta.selectionStart:ta.value.length; const se=(ta.selectionEnd!=null)?ta.selectionEnd:s; const before=ta.value.slice(0,s), after=ta.value.slice(se);
+  const pad = before && !/\s$/.test(before) ? " " : "";
+  ta.value = before + pad + txt + after; ta.focus(); const p=(before+pad+txt).length; ta.setSelectionRange(p,p);
+  S.v[id]=ta.value; save(); ta.dispatchEvent(new Event("input")); }
+window.insertInto = insertInto;
+R.write = b => { const box=$("div",{class:"card write"+(b.task?" task":"")});
+  box.append($("label",{class:"lbl", for:"ta-"+b.id, html:b.label}));
+  if(b.hint) box.append($("p",{class:"hint", html:b.hint, style:"font-size:14.5px;color:var(--muted);margin:0 0 6px"}));
+  const ta=$("textarea",{id:"ta-"+b.id, placeholder:b.placeholder||"Schreibe hier …"});
+  if(b.rows) ta.style.minHeight=(b.rows*26)+"px";
+  ta.value = S.v[b.id] || ""; const wc=$("span",{class:"wc"});
+  const upd=()=>{wc.textContent=words(ta.value)+" Wörter";}; ta.addEventListener("input",()=>{S.v[b.id]=ta.value; save(); upd();}); upd();
+  box.append(ta); const row=$("div",{class:"row"});
+  const st = typeof b.starters==="string" ? ((!b.starterLevels || b.starterLevels.includes(S.level)) ? b.starters : null) : (b.starters ? b.starters[S.level] : null);
+  if(st){
+    row.append($("button",{class:"btn ghost small", onclick:()=>{ if(ta.value.trim() && !confirm("Satzanfänge unten an deinen Text anhängen?")) return;
+      ta.value = (ta.value.trim()? ta.value.trim()+"\n\n":"") + st; S.v[b.id]=ta.value; save(); upd(); ta.focus(); }}, "Satzanfänge einfügen"));
+  }
+  if(b.copyFrom){ row.append($("button",{class:"btn ghost small", onclick:()=>{ const src=S.v[b.copyFrom]||""; if(!src.trim()){alert("Im vorherigen Feld steht noch nichts.");return;}
+      if(ta.value.trim() && !confirm("Dein bisheriger Text in diesem Feld wird ersetzt. Fortfahren?")) return; ta.value=src; S.v[b.id]=src; save(); upd(); }}, b.copyLabel||"Alten Text übernehmen")); }
+  const res=$("div");
+  if(b.check!==false){ row.append($("button",{class:"btn small", onclick:()=>{ const r=langCheck(ta.value,{indirect:b.indirect, noQuoteCheck:b.noQuoteCheck}); res.className="result "+r.cls; res.innerHTML=r.html; }}, "Sprach-Check")); }
+  row.append(wc); box.append(row, res); return box; };
+R.builder = b => { const box=$("div",{class:"card"+(b.task?" task":"")}); box.append($("h3",{html:b.title}));
+  if(b.intro) box.append($("p",{html:b.intro}));
+  const g=$("div",{class:"builder"});
+  b.fields.forEach((f,i)=>{ const id=b.id+"_"+i; const ta=$("textarea",{placeholder:f.ph||""}); ta.value=S.v[id]||"";
+    ta.addEventListener("input",()=>{S.v[id]=ta.value; save();});
+    g.append($("div",{class:"bf"}, $("label",{}, $("span",{class:"num"}, String(i+1)), f.label), f.hint?$("div",{class:"hint",html:f.hint}):null, ta)); });
+  box.append(g);
+  box.append($("div",{class:"row"}, $("button",{class:"btn", onclick:()=>{
+    const parts=b.fields.map((f,i)=>(S.v[b.id+"_"+i]||"").trim()).filter(Boolean);
+    if(parts.length<b.fields.length){ if(!confirm("Noch nicht alle Bausteine sind ausgefüllt. Trotzdem zusammensetzen?")) return; }
+    const para=parts.map(p=>/[.!?“]$/.test(p)?p:p+".").join(" ");
+    const cur=(S.v[b.target]||"").trim(); S.v[b.target]=(cur?cur+"\n\n":"")+para; save(); render();
+    setTimeout(()=>{const ta=document.getElementById("ta-"+b.target); if(ta){ta.scrollIntoView({behavior:"smooth",block:"center"}); ta.focus();}},50);
+  }}, b.btn||"Zu einem Absatz zusammensetzen ↓")));
+  return box; };
+R.mc = b => { const box=$("div",{class:"card mc task"}); box.append($("h3",{html:b.q}));
+  const name="mc-"+b.id; const res=$("div");
+  b.options.forEach((o,i)=>{ const r=$("input",{type:"radio",name}); if(S.v[b.id]===i) r.checked=true;
+    r.addEventListener("change",()=>{S.v[b.id]=i; save(); res.className=""; res.innerHTML="";}); box.append($("label",{},r,$("span",{html:o}))); });
+  box.append($("div",{class:"row"},$("button",{class:"btn small", onclick:()=>{ const v=S.v[b.id];
+    if(v==null){res.className="result warn"; res.innerHTML="Wähle zuerst eine Antwort."; return;}
+    const ok=v===b.correct; res.className="result "+(ok?"ok":"bad"); res.innerHTML=(ok?"<b>Richtig!</b> ":"<b>Noch nicht.</b> ")+(ok?b.why:(b.whyWrong||"Lies die Textstelle noch einmal und versuche es erneut.")); }}, "Prüfen")), res);
+  return box; };
+R.custom = b => b.render(S, save, render);
+R.final = b => { const wrap=$("div");
+  const txt = b.parts.map(p=>({title:p.title, body:p.ids.map(id=>(S.v[id]||"").trim()).filter(Boolean).join("\n\n")}));
+  const plain = (P.finalHeader?P.finalHeader(S)+"\n\n":"") + txt.map(p=>p.title.toUpperCase()+"\n"+(p.body||"[noch leer]")).join("\n\n");
+  const prev=$("div",{class:"final-preview"});
+  prev.innerHTML = (P.finalHeader?`<h4>${esc(P.finalHeader(S))}</h4>`:"") + txt.map(p=>`<h4>${esc(p.title)}</h4>`+(p.body?esc(p.body):'<span class="empty">noch leer – gehe zurück zu diesem Schritt</span>')).join("");
+  const res=$("div");
+  const total=txt.reduce((a,p)=>a+words(p.body),0);
+  wrap.append($("div",{class:"row noprint"},
+    $("button",{class:"btn", onclick:()=>{ const blob=new Blob([plain],{type:"text/plain;charset=utf-8"}); const a=$("a",{href:URL.createObjectURL(blob), download:(P.fileName||"Aufsatz")+".txt"}); document.body.append(a); a.click(); a.remove(); }}, "Als Textdatei speichern"),
+    $("button",{class:"btn ghost", onclick:()=>window.print()}, "Drucken / als PDF"),
+    $("button",{class:"btn ghost", onclick:()=>{ navigator.clipboard && navigator.clipboard.writeText(plain).then(()=>{res.className="result ok";res.innerHTML="Text kopiert – du kannst ihn jetzt z. B. in Word einfügen.";},()=>{res.className="result warn";res.innerHTML="Kopieren hat nicht geklappt. Markiere den Text unten und kopiere ihn mit Strg+C.";}); }}, "Kopieren"),
+    $("button",{class:"btn ghost", onclick:()=>{ const r=langCheck(txt.map(p=>p.body).join("\n\n"),{}); res.className="result "+r.cls; res.innerHTML="<b>Sprach-Check für den ganzen Text:</b><br>"+r.html; }}, "Sprach-Check (ganzer Text)"),
+    $("span",{class:"wc"}, total+" Wörter")), res, prev);
+  return wrap; };
+
+/* ---------- Startseite ---------- */
+function renderStart(main){
+  main.append($("div",{class:"hero", html:`<div><div class="kicker">${T.kicker||"Start"}</div><h2>${P.title}</h2><p>${P.intro}</p></div>${T.hero||""}`}));
+  main.append($("h3",{style:"margin:22px 0 4px"},"Wähle dein Niveau"), $("p",{style:"margin:0;color:var(--muted);font-size:15px"},"Du kannst es später jederzeit links in der Leiste ändern."));
+  const lv=$("div",{class:"levels"});
+  const STARS={basis:"viele Hilfen",standard:"einige Hilfen",experte:"wenige Hilfen"};
+  P.levels.forEach(l=>{ lv.append($("button",{class:"lvcard "+l.id+(S.level===l.id?" sel":""), onclick:()=>{S.level=l.id; save(); render();}}, $("span",{class:"stars"},STARS[l.id]), $("b",{},(T.levelNames&&T.levelNames[l.id])||l.name), $("span",{html:l.desc}))); });
+  main.append(lv);
+  if(P.startExtra) main.append($("div",{class:"card", html:P.startExtra}));
+}
+
+/* ---------- Layout ---------- */
+const app=document.getElementById("app");
+const T = P.theme || {}; if(T.id) document.body.classList.add("theme-"+T.id);
+function render(){
+  app.innerHTML="";
+  const side=$("aside",{class:"side collapsed"});
+  side.append($("button",{class:"btn ghost small menu-toggle", onclick:()=>side.classList.toggle("collapsed")},"☰ Schritte"));
+  const brand=$("div",{class:"brand"}); if(T.icon) brand.append($("span",{html:T.icon}));
+  brand.append($("div",{}, $("h1",{},P.short), $("div",{class:"sub",style:"margin:0"},P.sub))); side.append(brand);
+  if(S.level) side.append($("span",{class:"levelpill lv-"+S.level},"Niveau: "+LV[S.level]));
+  const pct=Math.round(100*S.step/(P.steps.length));
+  const pr=$("div",{class:"progress"}); pr.append($("span",{style:`width:${Math.max(pct,3)}%`})); side.append(pr);
+  side.append($("div",{class:"ptext"}, T.progress ? T.progress(pct) : pct+" %"));
+  const ul=$("ul",{class:"nav"});
+  ul.append($("li",{}, $("button",{class:S.step===0?"cur":"", onclick:()=>go(0)}, $("span",{class:"dot"},"★"), "Start")));
+  let lastG=null;
+  P.steps.forEach((st,i)=>{ if(st.group && st.group!==lastG){ ul.append($("li",{class:"grp"},st.group)); lastG=st.group; }
+    const li=$("li",{class:S.seen[i+1]&&S.step!==i+1?"done":""});
+    const b=$("button",{class:S.step===i+1?"cur":"", onclick:()=>go(i+1)}, $("span",{class:"dot"}, S.seen[i+1]?"✓":String(i+1)), st.nav||st.title);
+    if(!S.level) b.disabled=true; li.append(b); ul.append(li); });
+  side.append(ul);
+  const sm=$("div",{class:"small"}); sm.append("Niveau ändern: ");
+  P.levels.forEach((l,i)=>{ sm.append($("button",{onclick:()=>{S.level=l.id; save(); render();}}, l.name)); if(i<P.levels.length-1) sm.append(" · "); });
+  sm.append($("br")); sm.append($("button",{onclick:()=>{ if(confirm("Wirklich alle Eingaben löschen und neu beginnen?")){ try{localStorage.removeItem(P.key);}catch(e){} location.reload(); } }}, "Alles löschen & neu beginnen"));
+  sm.append($("div",{style:"margin-top:8px"},"Deine Eingaben werden automatisch in diesem Browser gespeichert."));
+  side.append(sm);
+  const main=$("main");
+  if(S.step===0){ renderStart(main); }
+  else { const st=P.steps[S.step-1];
+    const head=$("div",{class:"stephead"});
+    head.append($("div",{class:"stepnum", html:`<small>${T.stepWord||"SCHRITT"}</small>${S.step}`}), $("div",{}, $("span",{class:"grouptag"}, (st.group||"")+"  ·  "+S.step+" / "+P.steps.length), $("h2",{html:st.title})));
+    main.append(head);
+    if(S.step===P.steps.length && T.finish) main.append($("div",{class:"finish", html:T.finish}));
+    if(st.lead) main.append($("p",{class:"lead", html:st.lead}));
+    st.blocks.forEach(b=>{ if(vis(b)) main.append(R[b.type](b)); }); }
+  const nav=$("div",{class:"stepnav noprint"});
+  nav.append(S.step>0?$("button",{class:"btn ghost", onclick:()=>go(S.step-1)},"← Zurück"):$("span"));
+  if(S.step<P.steps.length){ const nx=$("button",{class:"btn", onclick:()=>go(S.step+1)}, S.step===0?"Los geht's →":"Weiter →"); if(!S.level) {nx.disabled=true; nx.title="Wähle zuerst ein Niveau";} nav.append(nx); }
+  main.append(nav);
+  app.append(side, main);
+  if(P.source) app.append(...sourceDrawer());
+}
+window.RENDER = render;
+function go(i){ if(i>0 && !S.level) return; if(S.step>0) S.seen[S.step]=true; S.step=Math.max(0,Math.min(P.steps.length,i)); save(); render(); window.scrollTo(0,0); }
+
+/* ---------- Quelltext-Schublade ---------- */
+let drawerOpen=false;
+function sourceDrawer(){
+  const src=P.source; const d=$("div",{class:"drawer"+(drawerOpen?" open":"")});
+  const body=$("div",{class:"src"}); body.append($("h4",{},src.title), $("div",{class:"meta", html:src.meta}));
+  let n=0; src.paras.forEach(lines=>{ lines.forEach((l,j)=>{ n++; body.append($("div",{class:"ln"+(j===0&&n>1?" pstart":"")}, $("i",{}, (n%5===0||n===1)?String(n):""), $("span",{},l))); }); });
+  d.append($("header",{}, $("b",{},src.label||"Text"), $("button",{class:"btn ghost small", onclick:()=>{drawerOpen=false; d.classList.remove("open");}},"Schließen ✕")), $("div",{class:"scroll"},body));
+  const btn=$("button",{class:"btn textbtn noprint", onclick:()=>{drawerOpen=!drawerOpen; d.classList.toggle("open",drawerOpen);}}, "📄 "+(src.button||"Text anzeigen"));
+  return [btn,d];
+}
+render();
+})();
+</script><script>window.__ok=true;</script></body></html>
